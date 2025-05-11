@@ -30,7 +30,7 @@ The MVP backend includes:
 - [x] Basic folder structure (`src/`)
 - [ ] Authentication routes
 - [ ] Property listing routes
-- [ ] PostgreSQL setup
+- [x] PostgreSQL setup
 - [ ] Validation middleware
 - [ ] API documentation (Swagger/Postman)
 
