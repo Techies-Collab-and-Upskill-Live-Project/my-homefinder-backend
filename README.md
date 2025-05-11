@@ -43,7 +43,7 @@ The MVP backend includes:
 - **TypeScript**
 - **Dotenv**
 - **Nodemon + ts-node-dev**
-- **PostgreSQL** (via Prisma or Sequelize planned)
+- **PostgreSQL** (via Prisma)
 - **Joi/Zod** for validation (planned)
 
 ---
@@ -57,6 +57,9 @@ cd my-homefinder-backend
 
 # Install dependencies
 npm install
+
+# Database Migration
+npx prisma migrate dev
 
 # Start development server
 npm run dev
