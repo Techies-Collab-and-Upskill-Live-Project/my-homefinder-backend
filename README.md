@@ -58,8 +58,16 @@ cd my-homefinder-backend
 # Install dependencies
 npm install
 
+# Create .env file from sample and update with your settings
+cp .env.template .env
+
+# Open `.env` and update the DATABASE_URL and other env variables accordingly
+
 # Database Migration
-npx prisma migrate dev
+npx prisma migrate dev --name init
+
+# Generate Prisma client
+npx prisma generate
 
 # Start development server
 npm run dev
