@@ -16,6 +16,7 @@ export class UploadController {
         message: "file uploaded",
       });
     } catch (error) {
+      console.log(error);
       next(error);
     }
   };

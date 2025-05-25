@@ -1,21 +1,17 @@
-import { fileURLToPath } from "node:url";
 import path from "path";
 import multer from "multer";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Define __filename and __dirname for ESM
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../upload/documents"));
+  destination: function (_req, file, cb) {
+    cb(null, path.join(__dirname, "uploads"));
   },
-  filename(req, file, callback) {
+  filename(_req, file, callback) {
     const ext = path.extname(file.originalname);
-    const uniqueName = `${Date.now()}-${ext}`;
+    const uniqueName = `${Date.now()}${ext}`;
     callback(null, uniqueName);
   },
 });
 
-const uploadMiddleware = multer({ storage });
-
-export default uploadMiddleware;
+export const uploadMiddleware = multer({ storage });
