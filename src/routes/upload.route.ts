@@ -2,6 +2,7 @@ import { Router } from "express";
 import { Routes } from "../interfaces/route.interface";
 import { UploadController } from "../controllers/upload.controller";
 import { uploadMiddleware } from "../middlewares/upload.middileware";
+import { asyncHandler } from "../utils/asyncHandler";
 
 export class UploadRoute implements Routes {
   public path = "/upload";
@@ -15,8 +16,9 @@ export class UploadRoute implements Routes {
   private initializeRoutes() {
     this.router.post(
       `${this.path}`,
-      uploadMiddleware.single("doc"),
-      this.uploadController.uploadDoc,
+      uploadMiddleware,
+      asyncHandler(this.uploadController.uploadDoc)
     );
   }
 }
+

@@ -1,17 +1,15 @@
-import path from "path";
 import multer from "multer";
+import { storage } from "../config/cloudinary.config";
+import { Request, Response, NextFunction } from "express";
 
-// Define __filename and __dirname for ESM
+export const uploadMiddleware = async(req: Request, res: Response, next: NextFunction) => {
+  const upload = multer({ storage }).single("doc");
 
-const storage = multer.diskStorage({
-  destination: function (_req, file, cb) {
-    cb(null, path.join(__dirname, "uploads"));
-  },
-  filename(_req, file, callback) {
-    const ext = path.extname(file.originalname);
-    const uniqueName = `${Date.now()}${ext}`;
-    callback(null, uniqueName);
-  },
-});
+  upload(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ message: "Error uploading file", error: err });
+    }
+    next();
+  });
+}
 
-export const uploadMiddleware = multer({ storage });
