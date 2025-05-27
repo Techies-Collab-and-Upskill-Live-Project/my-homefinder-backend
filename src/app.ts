@@ -8,7 +8,6 @@ import errorMiddleware from "./middlewares/error.middleware";
 import { notFoundError } from "./middlewares/notfound.middleware";
 import { Routes } from "./interfaces/route.interface";
 import { PrismaClient } from "../generated/prisma";
-import { testUpload } from "./testUpload";
 
 class App {
   public port: number;
@@ -43,7 +42,6 @@ class App {
 
   private connectDatabase = async () => {
     try {
-      // await testUpload();
       await this.prisma.$connect();
       console.log("Connected to database");
     } catch (error) {
