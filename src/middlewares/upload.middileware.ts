@@ -1,21 +1,15 @@
-import { fileURLToPath } from "node:url";
-import path from "path";
 import multer from "multer";
+import { storage } from "../config/cloudinary.config";
+import { Request, Response, NextFunction } from "express";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+export const uploadMiddleware = async(req: Request, res: Response, next: NextFunction) => {
+  const upload = multer({ storage }).single("doc");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../upload/documents"));
-  },
-  filename(req, file, callback) {
-    const ext = path.extname(file.originalname);
-    const uniqueName = `${Date.now()}-${ext}`;
-    callback(null, uniqueName);
-  },
-});
+  upload(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ message: "Error uploading file", error: err });
+    }
+    next();
+  });
+}
 
-const uploadMiddleware = multer({ storage });
-
-export default uploadMiddleware;
