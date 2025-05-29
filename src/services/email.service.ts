@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import { config } from '../config';
-import { EmailTemplates } from '../utils/emailTemplates';
+import { EmailTemplates } from '../utils/email-templates.util';
 
 export class EmailService {
   private transporter: nodemailer.Transporter;

@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { prisma } from '../prisma/prisma';
-import { EmailService } from './emailService'; 
-import { OTPGenerator } from '../utils/otpGenerator';
+import { EmailService } from './email.service'; 
+import { OTPGenerator } from '../utils/otp-generator.util';
 import { config } from '../config';
 
 export class PasswordResetService {
