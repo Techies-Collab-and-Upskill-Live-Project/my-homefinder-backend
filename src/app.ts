@@ -8,6 +8,7 @@ import errorMiddleware from "./middlewares/error.middleware";
 import { notFoundError } from "./middlewares/notfound.middleware";
 import { Routes } from "./interfaces/route.interface";
 import { PrismaClient } from "../generated/prisma";
+import { extractTextFromImage } from "./utils/ocrDocs";
 
 class App {
   public port: number;
@@ -43,6 +44,10 @@ class App {
   private connectDatabase = async () => {
     try {
       await this.prisma.$connect();
+      const text = await extractTextFromImage(
+        "/home/stateman24/Downloads/doc.jpeg",
+      );
+      console.log(text);
       console.log("Connected to database");
     } catch (error) {
       console.error("Failed to connect to database");
