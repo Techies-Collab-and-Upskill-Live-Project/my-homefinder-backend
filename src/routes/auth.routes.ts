@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { AuthController } from '../controllers/authController';
-import { validateForgotPassword, validateResetPassword } from '../middlewares/validation';
-import { forgotPasswordLimiter, resetPasswordLimiter } from '../middlewares/rateLimiter';
+import { AuthController } from '../controllers/auth.controller';
+import { validateForgotPassword, validateResetPassword } from '../middlewares/validation.middleware';
+import { forgotPasswordLimiter, resetPasswordLimiter } from '../middlewares/rate-limiter.middleware';
 
 const router = Router();
 const authController = new AuthController();
