@@ -1,5 +1,8 @@
-import App from "./app";
+import App from './app';
+import AuthRoute from './routes/auth.route';
 
-const application = new App([]);
+const app = new App([
+  new AuthRoute()
+]);
 
-application.startServer();
+app.startServer();

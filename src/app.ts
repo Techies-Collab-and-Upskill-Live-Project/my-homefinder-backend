@@ -35,8 +35,8 @@ class App {
   };
 
   private initializeRoutes = (routes: Routes[]) => {
-    routes.forEach(({ router }) => {
-      this.app.use("/", router);
+    routes.forEach(({ path, router }) => {
+      this.app.use(path, router);
     });
   };
 
@@ -45,7 +45,7 @@ class App {
       await this.prisma.$connect();
       console.log("Connected to database");
     } catch (error) {
-      console.error("Failed to connect to database");
+      console.error("Failed to connect to database", error);
     }
   };
 
