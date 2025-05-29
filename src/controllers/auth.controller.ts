@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { PasswordResetService } from '../services/password-reset.service';
-import { ForgotPasswordRequest, ResetPasswordRequest, ApiResponse } from '../types/auth.type';
+import { ForgotPasswordRequest, ResetPasswordRequest, ApiResponse } from '../interfaces/auth.interface';
 
 export class AuthController {
   private passwordResetService: PasswordResetService;
