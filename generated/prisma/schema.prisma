@@ -46,3 +46,18 @@ model PasswordResetToken {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model Document {
+  id         String             @id @default(uuid())
+  userId     String
+  fileName   String
+  fileUrl    String
+  status     VerificationStatus @default(PENDING)
+  uploadedAt DateTime           @default(now())
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
