@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { body, validationResult, ValidationChain } from 'express-validator';
-import { ApiResponse } from '../types/auth';
+import { ApiResponse } from '../types/auth.type';
 
 // Validation error handler middleware
 const handleValidationErrors = (req: Request, res: Response, next: NextFunction): void => {
@@ -17,7 +17,7 @@ const handleValidationErrors = (req: Request, res: Response, next: NextFunction)
   next();
 };
 
-// Forgot password validation rules
+// Forgot Password validation rules
 export const forgotPasswordValidationRules = (): ValidationChain[] => [
   body('email')
     .isEmail()

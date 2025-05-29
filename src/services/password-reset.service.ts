@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { prisma } from '../prisma/prisma';
-import { EmailService } from './emailService'; 
+import { EmailService } from './email.service'; 
 import { OTPGenerator } from '../utils/otpGenerator';
 import { config } from '../config';
 
