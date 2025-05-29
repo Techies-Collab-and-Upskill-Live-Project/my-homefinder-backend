@@ -30,7 +30,7 @@ export const config = {
     expiryMinutes: parseInt(process.env.OTP_EXPIRY_MINUTES || '15'),
   },
   app: {
-    name: 'my-homefinder-backend',
+    name: 'My Home Finder',
     url: process.env.APP_URL || 'http://localhost:3000',
   },
   
