@@ -1,11 +1,14 @@
 import "dotenv/config";
 // config({ path: `.env.${process.env.NODE_ENV}` || '.env' });
 
+
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const { PORT, JWT_LIFETIME, JWT_SECRET, NODE_ENV, ORIGIN, CREDENTIALS } =
+export const { PORT, JWT_LIFETIME, JWT_SECRET, NODE_ENV, ORIGIN, CREDENTIALS, CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET } =
   process.env;
 
 
@@ -30,4 +33,6 @@ export const config = {
     name: 'my-homefinder-backend',
     url: process.env.APP_URL || 'http://localhost:3000',
   },
+  
 };
+

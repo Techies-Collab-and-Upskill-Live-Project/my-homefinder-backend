@@ -160,12 +160,12 @@ const config = {
       }
     ],
     "previewFeatures": [],
+
     "sourceFilePath": "/home/berylatieno/workspace/tculive/my-homefinder-backend/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../prisma",
   "clientVersion": "6.7.0",

@@ -145,7 +145,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/berylatieno/workspace/tculive/my-homefinder-backend/generated/prisma",
+      "value": "/home/stateman24/node.js_projects/my-homefinder-backend/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -159,12 +159,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/berylatieno/workspace/tculive/my-homefinder-backend/prisma/schema.prisma",
+    "sourceFilePath": "/home/stateman24/node.js_projects/my-homefinder-backend/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../prisma",
   "clientVersion": "6.7.0",
@@ -173,7 +172,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
