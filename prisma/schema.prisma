@@ -15,8 +15,8 @@ datasource db {
 }
 
 model Role {
-  id    Int     @id @default(autoincrement())
-  name  String  @unique
+  id    Int    @id @default(autoincrement())
+  name  String @unique
   users User[]
 }
 
@@ -32,9 +32,8 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-// Password reset tokens
+  // Password reset tokens
   passwordResetTokens PasswordResetToken[]
-
 }
 
 model PasswordResetToken {
@@ -46,5 +45,19 @@ model PasswordResetToken {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+}
+
+model Document {
+  id         String             @id @default(uuid())
+  userId     String
+  fileName   String
+  fileUrl    String
+  status     VerificationStatus @default(PENDING)
+  uploadedAt DateTime           @default(now())
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
