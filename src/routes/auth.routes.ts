@@ -1,25 +1,32 @@
 import { Router } from 'express';
+import { Routes } from '../interfaces/route.interface';
 import { AuthController } from '../controllers/auth.controller';
 import { validateForgotPassword, validateResetPassword } from '../middlewares/validation.middleware';
 import { forgotPasswordLimiter, resetPasswordLimiter } from '../middlewares/rate-limiter.middleware';
+import { asyncHandler } from '../utils/asyncHandler';
 
-const router = Router();
-const authController = new AuthController();
+export class AuthRoute implements Routes {
+  public path = '/auth';
+  public router: Router = Router();
+  private authController = new AuthController();
 
-// POST /api/auth/forgot-password
-router.post(
-  '/forgot-password',
-  forgotPasswordLimiter,
-  validateForgotPassword,
-  authController.forgotPassword
-);
+  constructor() {
+    this.initializeRoutes();
+  }
 
-// POST /api/auth/reset-password
-router.post(
-  '/reset-password',
-  resetPasswordLimiter,
-  validateResetPassword,
-  authController.resetPassword
-);
+  private initializeRoutes() {
+    this.router.post(
+      `${this.path}/forgot-password`,
+      forgotPasswordLimiter,
+      validateForgotPassword,
+      asyncHandler(this.authController.forgotPassword)
+    );
 
-export { router as authRoutes };
+    this.router.post(
+      `${this.path}/reset-password`,
+      resetPasswordLimiter,
+      validateResetPassword,
+      asyncHandler(this.authController.resetPassword)
+    );
+  }
+}
