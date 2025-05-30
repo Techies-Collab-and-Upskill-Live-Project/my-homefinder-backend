@@ -5,7 +5,12 @@ import { renterIdDetails } from "../interfaces/response.interface";
 import { UploadService } from "../services/upload.service";
 
 export class UploadController {
-  private uploadService = new UploadService();
+  private uploadService: UploadService;
+
+  constructor() {
+    this.uploadService = new UploadService();
+  }
+
   public uploadDoc = async (
     req: Request,
     res: Response,
@@ -33,5 +38,16 @@ export class UploadController {
     req: Request,
     res: Response,
     next: NextFunction,
-  ) => {};
+  ) => {
+    try {
+      const { docId } = req.params;
+      const idDetails = req.body;
+      await this.uploadService.verifyID(docId, idDetails);
+      res
+        .status(StatusCodes.OK)
+        .json({ message: "Document Verification Successfull" });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

@@ -5,7 +5,7 @@ import { uploadMiddleware } from "../middlewares/upload.middleware";
 import { asyncHandler } from "../utils/asyncHandler";
 
 export class UploadRoute implements Routes {
-  public path = "/upload";
+  public path = "/upload/v1";
   public router: Router = Router();
   private uploadController = new UploadController();
 
@@ -19,5 +19,7 @@ export class UploadRoute implements Routes {
       uploadMiddleware,
       asyncHandler(this.uploadController.uploadDoc),
     );
+    // Verify Document Route Meant for ADMIN role
+    this.router.post(`${this.path}/verify`, this.uploadController.verifyDoc);
   }
 }
