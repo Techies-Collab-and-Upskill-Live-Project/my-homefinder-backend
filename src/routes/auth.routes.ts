@@ -4,9 +4,12 @@ import { AuthController } from '../controllers/auth.controller';
 import { validateForgotPassword, validateResetPassword } from '../middlewares/validation.middleware';
 import { forgotPasswordLimiter, resetPasswordLimiter } from '../middlewares/rate-limiter.middleware';
 import { asyncHandler } from '../utils/asyncHandler';
+import { login } from '../controllers/login.controller';
+import { signup } from '../controllers/signup.controller';
+
 
 export class AuthRoute implements Routes {
-  public path = '/auth';
+  public path = '/api/auth';
   public router: Router = Router();
   private authController = new AuthController();
 
@@ -28,5 +31,7 @@ export class AuthRoute implements Routes {
       validateResetPassword,
       asyncHandler(this.authController.resetPassword)
     );
+    this.router.post('/login', login);
+    this.router.post(`/signup`, signup);
   }
 }
