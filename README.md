@@ -28,7 +28,7 @@ The MVP backend includes:
 
 - [x] Project scaffolded with Express + TypeScript
 - [x] Basic folder structure (`src/`)
-- [ ] Authentication routes
+- [x] Authentication routes
 - [ ] Property listing routes
 - [x] PostgreSQL setup
 - [ ] Validation middleware

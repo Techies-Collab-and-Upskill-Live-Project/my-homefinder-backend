@@ -159,7 +159,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/stateman24/node.js_projects/my-homefinder-backend/generated/prisma",
+      "value": "C:\\Users\\HP\\Desktop\\my-homefinder-backend\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -168,12 +168,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "windows",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/stateman24/node.js_projects/my-homefinder-backend/prisma/schema.prisma",
+    "sourceFilePath": "C:\\Users\\HP\\Desktop\\my-homefinder-backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

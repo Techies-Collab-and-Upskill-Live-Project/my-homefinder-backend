@@ -40,8 +40,8 @@ export const config = {
     expiryMinutes: parseInt(process.env.OTP_EXPIRY_MINUTES || "15"),
   },
   app: {
-    name: "my-homefinder-backend",
-    url: process.env.APP_URL || "http://localhost:3000",
+    name: 'My Home Finder',
+    url: process.env.APP_URL || 'http://localhost:3000',
   },
   cloudinary: {
     cloudinary_api_key: process.env.CLOUDINARY_API_KEY!,
