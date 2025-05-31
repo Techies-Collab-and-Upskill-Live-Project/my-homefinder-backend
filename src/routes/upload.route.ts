@@ -2,10 +2,10 @@ import { Router } from "express";
 import { Routes } from "../interfaces/route.interface";
 import { UploadController } from "../controllers/upload.controller";
 import { uploadMiddleware } from "../middlewares/upload.middleware";
-import { asyncHandler } from "../utils/asyncHandler";
+import { asyncHandler } from "../utils/asyncHandler.util";
 
 export class UploadRoute implements Routes {
-  public path = "/upload/v1";
+  public path = "/api/v1/upload";
   public router: Router = Router();
   private uploadController = new UploadController();
 
@@ -19,7 +19,5 @@ export class UploadRoute implements Routes {
       uploadMiddleware,
       asyncHandler(this.uploadController.uploadDoc),
     );
-    // Verify Document Route Meant for ADMIN role
-    this.router.post(`${this.path}/verify`, this.uploadController.verifyDoc);
   }
 }

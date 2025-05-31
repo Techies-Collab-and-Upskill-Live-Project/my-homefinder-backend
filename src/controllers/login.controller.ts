@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
-import { comparePassword } from '../utils/hash.util';
-import { generateToken } from '../utils/jwt';
+import { Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
+import { comparePassword } from "../utils/hash.util";
+import { generateToken } from "../utils/jwt.util";
 
 const prisma = new PrismaClient();
 
@@ -10,7 +10,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const { emailOrPhone, password } = req.body;
 
     if (!emailOrPhone || !password) {
-      res.status(400).json({ message: 'Email/Phone and password are required' });
+      res
+        .status(400)
+        .json({ message: "Email/Phone and password are required" });
       return;
     }
 
@@ -22,13 +24,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     });
 
     if (!user) {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: "User not found" });
       return;
     }
 
     const isMatch = await comparePassword(password, user.password);
     if (!isMatch) {
-      res.status(401).json({ message: 'Invalid credentials' });
+      res.status(401).json({ message: "Invalid credentials" });
       return;
     }
 
@@ -39,7 +41,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     });
 
     res.status(200).json({
-      message: 'Login successful',
+      message: "Login successful",
       token,
       user: {
         id: user.id,
@@ -50,7 +52,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       },
     });
   } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
