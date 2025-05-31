@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { comparePassword } from '../utils/hash';
+import { comparePassword } from '../utils/hash.util';
 import { generateToken } from '../utils/jwt';
 
 const prisma = new PrismaClient();
