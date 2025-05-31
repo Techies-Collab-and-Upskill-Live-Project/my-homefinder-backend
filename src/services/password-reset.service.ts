@@ -1,7 +1,7 @@
-import bcrypt from 'bcryptjs';
 import { prisma } from '../prisma/prisma';
 import { EmailService } from './email.service'; 
 import { OTPGenerator } from '../utils/otp-generator.util';
+import { hashPassword, comparePassword } from '../utils/hash.util';
 import { config } from '../config';
 
 export class PasswordResetService {
@@ -45,7 +45,7 @@ export class PasswordResetService {
       const expiresAt = OTPGenerator.generateExpiryDate(config.otp.expiryMinutes);
 
       // Hash the OTP before storing
-      const hashedOTP = await bcrypt.hash(otp, 12);
+      const hashedOTP = await hashPassword(otp);
 
       // Store the token in database
       await prisma.passwordResetToken.create({
@@ -88,7 +88,7 @@ export class PasswordResetService {
       // Find the matching token by comparing hashes
       let matchingTokenRecord = null;
       for (const tokenRecord of validTokens) {
-        const isMatch = await bcrypt.compare(token, tokenRecord.token);
+        const isMatch = await comparePassword(token, tokenRecord.token);
         if (isMatch) {
           matchingTokenRecord = tokenRecord;
           break;
@@ -103,7 +103,7 @@ export class PasswordResetService {
       }
 
       // Hash the new password
-      const hashedPassword = await bcrypt.hash(newPassword, 12);
+      const hashedPassword = await hashPassword(newPassword);
 
       // Update user password and mark token as used
       await prisma.$transaction([
