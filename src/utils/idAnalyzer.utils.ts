@@ -11,10 +11,10 @@ export const idAnalyzer = async (fileurl: string) => {
 
     const fileBase64 = Buffer.from(fileBuffer.data).toString("base64");
 
-    const reponse = await axios.post("https://api.idanalyzer.com/coreapi", {
+    const response = await axios.post("https://api.idanalyzer.com/coreapi", {
       profile_id: IDANALYZER_PROFILE_ID,
       file_base64: fileBase64,
-      verify_doucment_number: true,
+      verify_document_number: true,
       biometric_match: false,
       headers: {
         "X-API-KEY": IDANALYZER_API_KEY,
@@ -23,7 +23,7 @@ export const idAnalyzer = async (fileurl: string) => {
       },
     });
 
-    const verificationData = reponse.data.result;
+    const verificationData = response.data.result;
 
     if (!verificationData) {
       throw new HTTPException(

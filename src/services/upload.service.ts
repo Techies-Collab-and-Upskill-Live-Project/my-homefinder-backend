@@ -3,7 +3,7 @@ import { PrismaClient } from "../../generated/prisma";
 import HTTPException from "../exceptions/http.exception";
 import { MulterFile } from "../interfaces/multerFile.interface";
 import { renterIdDetails } from "../interfaces/response.interface";
-import { idAnalyzer } from "../utils/idAnalyzer";
+import { idAnalyzer } from "../utils/idAnalyzer.utils";
 
 export class UploadService {
   private prisma: PrismaClient;
@@ -43,7 +43,7 @@ export class UploadService {
     if (extractedId != idDetails.idNumber) {
       throw new HTTPException(
         StatusCodes.FORBIDDEN,
-        "Document Verification Falied",
+        "Document Verification Failed",
       );
     }
   };
