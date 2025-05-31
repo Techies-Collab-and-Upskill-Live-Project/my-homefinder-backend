@@ -18,8 +18,8 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => {
     return {
-      folder: "doucment",
-      format: "jpg",
+      folder: "document",
+      format: ["jpg", "png", "pdf"],
       public_id: `${Date.now()}-${file.originalname}`,
     };
   },

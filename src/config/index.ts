@@ -15,6 +15,8 @@ export const {
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET,
+  IDANALYZER_API_KEY,
+  IDANALYZER_PROFILE_ID,
 } = process.env;
 
 export const config = {

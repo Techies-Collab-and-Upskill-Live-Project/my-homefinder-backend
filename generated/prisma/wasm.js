@@ -146,7 +146,7 @@ exports.Prisma.PasswordResetTokenScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
-exports.Prisma.DocumentScalarFieldEnum = {
+exports.Prisma.UserDocumentScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   fileName: 'fileName',
@@ -174,7 +174,7 @@ exports.Prisma.ModelName = {
   Role: 'Role',
   User: 'User',
   PasswordResetToken: 'PasswordResetToken',
-  Document: 'Document'
+  UserDocument: 'UserDocument'
 };
 
 /**
