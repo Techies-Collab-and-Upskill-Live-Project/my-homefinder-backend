@@ -1,6 +1,10 @@
-import { Request, Response } from 'express';
-import { PasswordResetService } from '../services/password-reset.service';
-import { ForgotPasswordRequest, ResetPasswordRequest, ApiResponse } from '../interfaces/auth.interface';
+import { Request, Response } from "express";
+import { PasswordResetService } from "../services/password-reset.service";
+import {
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+  ApiResponse,
+} from "../interfaces/auth.interface";
 
 export class AuthController {
   private passwordResetService: PasswordResetService;
@@ -13,7 +17,8 @@ export class AuthController {
     try {
       const { email }: ForgotPasswordRequest = req.body;
 
-      const result = await this.passwordResetService.initiateForgotPassword(email);
+      const result =
+        await this.passwordResetService.initiateForgotPassword(email);
 
       const response: ApiResponse = {
         success: result.success,
@@ -22,11 +27,12 @@ export class AuthController {
 
       res.status(200).json(response);
     } catch (error) {
-      console.error('Forgot password error:', error);
-      
+      console.error("Forgot password error:", error);
+
       const response: ApiResponse = {
         success: false,
-        message: 'An error occurred while processing your request. Please try again later.',
+        message:
+          "An error occurred while processing your request. Please try again later.",
       };
 
       res.status(500).json(response);
@@ -37,7 +43,10 @@ export class AuthController {
     try {
       const { token, newPassword }: ResetPasswordRequest = req.body;
 
-      const result = await this.passwordResetService.resetPassword(token, newPassword);
+      const result = await this.passwordResetService.resetPassword(
+        token,
+        newPassword,
+      );
 
       const response: ApiResponse = {
         success: result.success,
@@ -47,11 +56,12 @@ export class AuthController {
       const statusCode = result.success ? 200 : 400;
       res.status(statusCode).json(response);
     } catch (error) {
-      console.error('Reset password error:', error);
-      
+      console.error("Reset password error:", error);
+
       const response: ApiResponse = {
         success: false,
-        message: 'An error occurred while processing your request. Please try again later.',
+        message:
+          "An error occurred while processing your request. Please try again later.",
       };
 
       res.status(500).json(response);

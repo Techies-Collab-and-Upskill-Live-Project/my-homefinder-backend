@@ -34,6 +34,7 @@ model User {
 
   // Password reset tokens
   passwordResetTokens PasswordResetToken[]
+  UserDocument        UserDocument[]
 }
 
 model PasswordResetToken {
@@ -47,13 +48,15 @@ model PasswordResetToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Document {
+model UserDocument {
   id         String             @id @default(uuid())
   userId     String
   fileName   String
   fileUrl    String
   status     VerificationStatus @default(PENDING)
   uploadedAt DateTime           @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum VerificationStatus {

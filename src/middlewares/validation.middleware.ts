@@ -1,14 +1,18 @@
-import { Request, Response, NextFunction } from 'express';
-import { body, validationResult, ValidationChain } from 'express-validator';
-import { ApiResponse } from '../interfaces/auth.interface';
+import { Request, Response, NextFunction } from "express";
+import { body, validationResult, ValidationChain } from "express-validator";
+import { ApiResponse } from "../interfaces/auth.interface";
 
 // Validation error handler middleware
-const handleValidationErrors = (req: Request, res: Response, next: NextFunction): void => {
+const handleValidationErrors = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const response: ApiResponse = {
       success: false,
-      message: 'Validation failed',
+      message: "Validation failed",
       data: { errors: errors.array() },
     };
     res.status(400).json(response);
@@ -19,24 +23,26 @@ const handleValidationErrors = (req: Request, res: Response, next: NextFunction)
 
 // Forgot Password validation rules
 export const forgotPasswordValidationRules = (): ValidationChain[] => [
-  body('email')
+  body("email")
     .isEmail()
     .normalizeEmail()
-    .withMessage('Please provide a valid email address'),
+    .withMessage("Please provide a valid email address"),
 ];
 
 // Reset password validation rules
 export const resetPasswordValidationRules = (): ValidationChain[] => [
-  body('token')
+  body("token")
     .isLength({ min: 6, max: 6 })
     .isNumeric()
-    .withMessage('Please provide a valid 6-digit code'),
-  
-  body('newPassword')
+    .withMessage("Please provide a valid 6-digit code"),
+
+  body("newPassword")
     .isLength({ min: 8 })
-    .withMessage('Password must be at least 8 characters long')
+    .withMessage("Password must be at least 8 characters long")
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
-    .withMessage('Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character'),
+    .withMessage(
+      "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character",
+    ),
 ];
 
 // Export the validation middleware
