@@ -1,3 +1,4 @@
+import { config } from '../../../config';
 import { EmailService } from '../../../services/email.service';
 import nodemailer from 'nodemailer';
 
@@ -27,7 +28,7 @@ describe('EmailService', () => {
       await emailService.sendPasswordResetEmail(email, otp);
 
       expect(mockTransporter.sendMail).toHaveBeenCalledWith({
-        from: 'noreply@test.com',
+        from: config.email.from,
         to: email,
         subject: expect.stringContaining('Password Reset'),
         html: expect.stringContaining(otp),
