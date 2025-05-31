@@ -35,8 +35,8 @@ class App {
   };
 
   private initializeRoutes = (routes: Routes[]) => {
-    routes.forEach(({ router }) => {
-      this.app.use("/", router);
+    routes.forEach(({ router, path }) => {
+      this.app.use(path || '/', router);
     });
   };
 
