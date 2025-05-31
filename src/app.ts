@@ -35,8 +35,11 @@ class App {
   };
 
   private initializeRoutes = (routes: Routes[]) => {
-    routes.forEach(({ router, path }) => {
-      this.app.use(path || "/", router);
+    this.app.get("/", async (req, res) => {
+      res.send("Welcome to My Homefinder");
+    });
+    routes.forEach(({ router }) => {
+      this.app.use("/", router);
     });
   };
 

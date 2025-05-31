@@ -17,9 +17,9 @@ export class UploadController {
     next: NextFunction,
   ) => {
     try {
-      // const userId: string = req.user?.id;
+      const { userId } = req.body;
       const file = req.file as MulterFile;
-      //  const userDocument = this.uploadService.saveDocToDB(file, userId);
+      const userDocument = this.uploadService.saveDocToDB(file, userId);
       if (!file) {
         return res
           .status(StatusCodes.NOT_FOUND)
@@ -27,25 +27,8 @@ export class UploadController {
       }
       res.status(StatusCodes.OK).json({
         message: "file uploaded",
-        data: document,
+        data: userDocument,
       });
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  public verifyDoc = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => {
-    try {
-      const { docId } = req.params;
-      const idDetails = req.body;
-      await this.uploadService.verifyID(docId, idDetails);
-      res
-        .status(StatusCodes.OK)
-        .json({ message: "Document Verification Successfull" });
     } catch (error) {
       next(error);
     }

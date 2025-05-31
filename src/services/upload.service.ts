@@ -28,23 +28,4 @@ export class UploadService {
     }
     return userDoucment;
   };
-
-  public verifyID = async (docId: string, idDetails: renterIdDetails) => {
-    const userDocument = await this.prisma.userDocument.findUnique({
-      where: {
-        id: docId,
-      },
-    });
-    if (!userDocument) {
-      throw new HTTPException(StatusCodes.NOT_FOUND, "Doucumet not found");
-    }
-
-    const extractedId = await idAnalyzer(userDocument.fileUrl);
-    if (extractedId != idDetails.idNumber) {
-      throw new HTTPException(
-        StatusCodes.FORBIDDEN,
-        "Document Verification Failed",
-      );
-    }
-  };
 }
