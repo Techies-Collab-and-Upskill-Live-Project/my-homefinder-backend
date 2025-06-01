@@ -3,6 +3,7 @@ import { Routes } from "../interfaces/route.interface";
 import { UploadController } from "../controllers/upload.controller";
 import { uploadMiddleware } from "../middlewares/upload.middleware";
 import { asyncHandler } from "../utils/asyncHandler.util";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 export class UploadRoute implements Routes {
   public path = "/api/v1/upload";
@@ -16,7 +17,7 @@ export class UploadRoute implements Routes {
   private initializeRoutes() {
     this.router.post(
       `${this.path}`,
-      uploadMiddleware,
+      [authMiddleware, uploadMiddleware],
       asyncHandler(this.uploadController.uploadDoc),
     );
   }
