@@ -23,14 +23,11 @@ model Role {
 model User {
   id         String   @id @default(uuid())
   fullName   String
-  firstName  String
-  lastName   String
   email      String   @unique
   phone      String   @unique
   password   String
   isVerified Boolean  @default(false)
   roleId     Int
-  roleName   String
   role       Role     @relation(fields: [roleId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

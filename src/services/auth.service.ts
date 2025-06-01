@@ -42,15 +42,14 @@ export class AuthService {
 
     if (password !== passwordRepeat)
       throw new HTTPException(StatusCodes.BAD_REQUEST, "Passwords dont match");
-    const userRole = await this.prisma.role.findUnique({
+    let userRole = await this.prisma.role.findUnique({
       where: { name: role.toLowerCase() },
     });
 
     if (!userRole) {
-      throw new HTTPException(
-        StatusCodes.BAD_REQUEST,
-        "Role not found in system",
-      );
+      userRole = await this.prisma.role.create({
+        data: { name: role.toLowerCase() },
+      });
     }
 
     const hashedPassword = await hashPassword(password);
@@ -61,9 +60,12 @@ export class AuthService {
         email: email,
         phone: phone,
         password: hashedPassword,
-        roleId: userRole.id,
+        role: {
+          connect: { id: userRole.id },
+        },
       },
     });
+
     return newUser;
   };
 

@@ -10,11 +10,9 @@ import {
   resetPasswordLimiter,
 } from "../middlewares/rate-limiter.middleware";
 import { asyncHandler } from "../utils/asyncHandler.util";
-import { login } from "../controllers/login.controller";
-import { signup } from "../controllers/signup.controller";
 
 export class AuthRoute implements Routes {
-  public path = "/api/auth";
+  public path = "/api/v1/auth";
   public router: Router = Router();
   private authController = new AuthController();
 
@@ -36,7 +34,7 @@ export class AuthRoute implements Routes {
       validateResetPassword,
       asyncHandler(this.authController.resetPassword),
     );
-    this.router.post(`${this.path}/login`, login);
-    this.router.post(`${this.path}/signup`, signup);
+    this.router.post(`${this.path}/login`, this.authController.login);
+    this.router.post(`${this.path}/signup`, this.authController.signup);
   }
 }
