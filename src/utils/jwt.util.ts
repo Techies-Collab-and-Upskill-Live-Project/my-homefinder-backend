@@ -1,12 +1,13 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../config";
+import { TokenDataType } from "../interfaces/auth.interface";
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
-const JWT_EXPIRES_IN = '1d';
-
-export const generateToken = (payload: object): string => {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+export const generateToken = (payload: object): TokenDataType => {
+  const expiresIn = 60 * 60 * 24; // 1 day
+  const token = jwt.sign(payload, JWT_SECRET!, { expiresIn });
+  return { token, expiresIn };
 };
 
 export const verifyToken = (token: string): any => {
-  return jwt.verify(token, JWT_SECRET);
+  return jwt.verify(token, JWT_SECRET!);
 };
