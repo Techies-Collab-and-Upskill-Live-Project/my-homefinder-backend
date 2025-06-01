@@ -1,19 +1,68 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { PasswordResetService } from "../services/password-reset.service";
 import {
   ForgotPasswordRequest,
   ResetPasswordRequest,
   ApiResponse,
+  RequestWithUser,
 } from "../interfaces/auth.interface";
+import { StatusCodes } from "http-status-codes";
+import { AuthService } from "../services/auth.service";
 
 export class AuthController {
   private passwordResetService: PasswordResetService;
-
+  private authService: AuthService;
   constructor() {
     this.passwordResetService = new PasswordResetService();
+    this.authService = new AuthService();
   }
 
-  forgotPassword = async (req: Request, res: Response): Promise<void> => {
+  public signup = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = await this.authService.signup(req.body);
+      res
+        .status(StatusCodes.CREATED)
+        .json({ data: user, message: "User registered" });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public login = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { token, cookie, user } = await this.authService.login(req.body);
+      res.setHeader("Set-Cookie", [cookie]);
+      res
+        .status(StatusCodes.CREATED)
+        .json({ data: { user, ...token }, message: "User logged in" });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public logOut = async (
+    req: RequestWithUser,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      if (!req.user?.id) {
+        throw new Error("User ID is missing in request.");
+      }
+      const user = await this.authService.logout(req.user.id);
+      res.setHeader("Set-Cookie", ["Authorization=; Max-age=0"]);
+      res
+        .status(StatusCodes.OK)
+        .json({ message: "User logged out", data: user });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public forgotPassword = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     try {
       const { email }: ForgotPasswordRequest = req.body;
 
@@ -39,7 +88,7 @@ export class AuthController {
     }
   };
 
-  resetPassword = async (req: Request, res: Response): Promise<void> => {
+  public resetPassword = async (req: Request, res: Response): Promise<void> => {
     try {
       const { token, newPassword }: ResetPasswordRequest = req.body;
 
