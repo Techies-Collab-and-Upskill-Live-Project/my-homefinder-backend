@@ -13,3 +13,55 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Role {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  users User[]
+}
+
+model User {
+  id         String   @id @default(uuid())
+  fullName   String
+  email      String   @unique
+  phone      String   @unique
+  password   String
+  isVerified Boolean  @default(false)
+  roleId     Int
+  role       Role     @relation(fields: [roleId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  tenants TenantProfile[]
+  landlords LandLordProfile[]
+}
+
+model TenantProfile {
+  id  Int @id @default(autoincrement())
+  profileImage String
+  fullName String
+  phoneNumber String @unique
+  street String
+  city String
+  state String
+  NIN String @unique
+  userId String
+  user User @relation(fields: [userId], references: [id])
+}
+
+model LandLordProfile {
+  id Int @id @default(autoincrement())
+  profileImage String
+  typeOfHouse String
+  numberOfRooms String
+  otherInfo String
+  street String
+  preference Preference @default(calls)
+  userId String
+  user User @relation(fields: [userId], references: [id]) 
+}
+
+enum Preference {
+  calls
+  chat
+  both
+}
