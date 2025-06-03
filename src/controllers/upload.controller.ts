@@ -17,7 +17,7 @@ export class UploadController {
     next: NextFunction,
   ) => {
     try {
-      const { userId } = req.body;
+      const userId = req.user.id;
       const file = req.file as MulterFile;
       const userDocument = this.uploadService.saveDocToDB(file, userId);
       if (!file) {
