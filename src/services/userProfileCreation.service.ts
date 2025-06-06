@@ -61,39 +61,56 @@ class userProfilesCreation{
             }
         })
 
-        // if(!tenantProfile){
-        //     throw new Error("an error occued, couldn't create user profile");
-            
-        // }
-        // upload to psql database
 
         return {message:'succesfully created user profile',tenantProfile}
     }
 
     public async createProfileLandlord(image:string,body:any){
         const {typeOfHouse,numberOfRooms,otherInfo,street,preferences,NIN,driversLicense,BVN} = body
+        
         if(!image){throw new Error("user profile is required")}
-
+         if(!typeOfHouse || typeOfHouse == ''){throw new Error('Type Of House is required')}
+        if(!numberOfRooms || numberOfRooms == ''){throw new Error('number of rooms is required')}
+        if(!otherInfo || otherInfo == ''){throw new Error('other info is required')}
+        if(!street || street == ''){throw new Error('street is required')}
+        if(!preferences || preferences == ''){throw new Error('preferences is required')}
+        if(!NIN || NIN == ''){throw new Error('NIN is required')}
+        if(!driversLicense || driversLicense == ''){throw new Error('drivers license is required')}
+        if(!BVN || BVN == ''){throw new Error('BVN is required')}
 
         const uploadedImg = await cloudinary.uploader.upload(image,{
             folder:'uploads'
         })
+        // check if user exists
+        const user = await this.prisma.user.findUnique({
+            where:{id:"dskdjsdj"}
+        })
+        if(!user){
+            throw new Error("user does not exist")
+        }
     
         const imageUrl = uploadedImg.secure_url
-
         fs.unlinkSync(image)
 
-
-        if(!typeOfHouse || typeOfHouse == ''){throw new Error('Type Of House is required')}
-        if(!numberOfRooms || numberOfRooms == ''){throw new Error('fullname is required')}
-        if(!otherInfo || otherInfo == ''){throw new Error('fullname is required')}
-        if(!street || street == ''){throw new Error('fullname is required')}
-        if(!preferences || preferences == ''){throw new Error('fullname is required')}
-        if(!NIN || NIN == ''){throw new Error('fullname is required')}
-        if(!driversLicense || driversLicense == ''){throw new Error('fullname is required')}
-        if(!BVN || BVN == ''){throw new Error('fullname is required')}
+       
         // upload to psql database
-        return 'succesfully created user profile'
+        const createLandlordProfile = await this.prisma.landLordProfile.create({
+            data:{
+                profileImage:imageUrl,
+                typeOfHouse:typeOfHouse,
+                numberOfRooms:numberOfRooms,
+                otherInfo:otherInfo,
+                street:street,
+                preference:preferences,
+                NIN:NIN,
+                driversLicense:driversLicense,
+                BVN:BVN,
+                user:{
+                    connect:{ id: user.id}
+                }
+            }
+        })
+        return {message:'succesfully created user profile',createLandlordProfile}
     }
 
     

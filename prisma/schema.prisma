@@ -56,6 +56,9 @@ model LandLordProfile {
   otherInfo String
   street String
   preference Preference @default(calls)
+  NIN String @unique
+  driversLicense String @unique
+  BVN String @unique
   userId String
   user User @relation(fields: [userId], references: [id]) 
 }

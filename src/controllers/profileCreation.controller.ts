@@ -7,7 +7,7 @@ class usercontroller{
          const user = req.query.user
         const image = req.file?.path
         const body = req.body
-
+        console.log(user)
         if(!image){throw new Error("user image is required")}
         if(user == 'tenant'){
         const createProfile = await profileCreation.createProfileTenant(image,body)
@@ -20,6 +20,12 @@ class usercontroller{
 
     if(user == 'landlord'){
         // landlord logic from service
+        const createProfile = await profileCreation.createProfileLandlord(image,body)
+        res.status(200).json({
+            success:true,
+            message:"landlord profile creation was successfully",
+            data:createProfile
+        })
     }
 
        } catch (error) {

@@ -49,15 +49,18 @@ model TenantProfile {
 }
 
 model LandLordProfile {
-  id            Int        @id @default(autoincrement())
-  profileImage  String
-  typeOfHouse   String
-  numberOfRooms String
-  otherInfo     String
-  street        String
-  preference    Preference @default(calls)
-  userId        String
-  user          User       @relation(fields: [userId], references: [id])
+  id             Int        @id @default(autoincrement())
+  profileImage   String
+  typeOfHouse    String
+  numberOfRooms  String
+  otherInfo      String
+  street         String
+  preference     Preference @default(calls)
+  NIN            String     @unique
+  driversLicense String     @unique
+  BVN            String     @unique
+  userId         String
+  user           User       @relation(fields: [userId], references: [id])
 }
 
 enum Preference {

@@ -4669,6 +4669,9 @@ export namespace Prisma {
     otherInfo: string | null
     street: string | null
     preference: $Enums.Preference | null
+    NIN: string | null
+    driversLicense: string | null
+    BVN: string | null
     userId: string | null
   }
 
@@ -4680,6 +4683,9 @@ export namespace Prisma {
     otherInfo: string | null
     street: string | null
     preference: $Enums.Preference | null
+    NIN: string | null
+    driversLicense: string | null
+    BVN: string | null
     userId: string | null
   }
 
@@ -4691,6 +4697,9 @@ export namespace Prisma {
     otherInfo: number
     street: number
     preference: number
+    NIN: number
+    driversLicense: number
+    BVN: number
     userId: number
     _all: number
   }
@@ -4712,6 +4721,9 @@ export namespace Prisma {
     otherInfo?: true
     street?: true
     preference?: true
+    NIN?: true
+    driversLicense?: true
+    BVN?: true
     userId?: true
   }
 
@@ -4723,6 +4735,9 @@ export namespace Prisma {
     otherInfo?: true
     street?: true
     preference?: true
+    NIN?: true
+    driversLicense?: true
+    BVN?: true
     userId?: true
   }
 
@@ -4734,6 +4749,9 @@ export namespace Prisma {
     otherInfo?: true
     street?: true
     preference?: true
+    NIN?: true
+    driversLicense?: true
+    BVN?: true
     userId?: true
     _all?: true
   }
@@ -4832,6 +4850,9 @@ export namespace Prisma {
     otherInfo: string
     street: string
     preference: $Enums.Preference
+    NIN: string
+    driversLicense: string
+    BVN: string
     userId: string
     _count: LandLordProfileCountAggregateOutputType | null
     _avg: LandLordProfileAvgAggregateOutputType | null
@@ -4862,6 +4883,9 @@ export namespace Prisma {
     otherInfo?: boolean
     street?: boolean
     preference?: boolean
+    NIN?: boolean
+    driversLicense?: boolean
+    BVN?: boolean
     userId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["landLordProfile"]>
@@ -4874,6 +4898,9 @@ export namespace Prisma {
     otherInfo?: boolean
     street?: boolean
     preference?: boolean
+    NIN?: boolean
+    driversLicense?: boolean
+    BVN?: boolean
     userId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["landLordProfile"]>
@@ -4886,6 +4913,9 @@ export namespace Prisma {
     otherInfo?: boolean
     street?: boolean
     preference?: boolean
+    NIN?: boolean
+    driversLicense?: boolean
+    BVN?: boolean
     userId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["landLordProfile"]>
@@ -4898,10 +4928,13 @@ export namespace Prisma {
     otherInfo?: boolean
     street?: boolean
     preference?: boolean
+    NIN?: boolean
+    driversLicense?: boolean
+    BVN?: boolean
     userId?: boolean
   }
 
-  export type LandLordProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "profileImage" | "typeOfHouse" | "numberOfRooms" | "otherInfo" | "street" | "preference" | "userId", ExtArgs["result"]["landLordProfile"]>
+  export type LandLordProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "profileImage" | "typeOfHouse" | "numberOfRooms" | "otherInfo" | "street" | "preference" | "NIN" | "driversLicense" | "BVN" | "userId", ExtArgs["result"]["landLordProfile"]>
   export type LandLordProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -4925,6 +4958,9 @@ export namespace Prisma {
       otherInfo: string
       street: string
       preference: $Enums.Preference
+      NIN: string
+      driversLicense: string
+      BVN: string
       userId: string
     }, ExtArgs["result"]["landLordProfile"]>
     composites: {}
@@ -5357,6 +5393,9 @@ export namespace Prisma {
     readonly otherInfo: FieldRef<"LandLordProfile", 'String'>
     readonly street: FieldRef<"LandLordProfile", 'String'>
     readonly preference: FieldRef<"LandLordProfile", 'Preference'>
+    readonly NIN: FieldRef<"LandLordProfile", 'String'>
+    readonly driversLicense: FieldRef<"LandLordProfile", 'String'>
+    readonly BVN: FieldRef<"LandLordProfile", 'String'>
     readonly userId: FieldRef<"LandLordProfile", 'String'>
   }
     
@@ -5832,6 +5871,9 @@ export namespace Prisma {
     otherInfo: 'otherInfo',
     street: 'street',
     preference: 'preference',
+    NIN: 'NIN',
+    driversLicense: 'driversLicense',
+    BVN: 'BVN',
     userId: 'userId'
   };
 
@@ -6152,6 +6194,9 @@ export namespace Prisma {
     otherInfo?: StringFilter<"LandLordProfile"> | string
     street?: StringFilter<"LandLordProfile"> | string
     preference?: EnumPreferenceFilter<"LandLordProfile"> | $Enums.Preference
+    NIN?: StringFilter<"LandLordProfile"> | string
+    driversLicense?: StringFilter<"LandLordProfile"> | string
+    BVN?: StringFilter<"LandLordProfile"> | string
     userId?: StringFilter<"LandLordProfile"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -6164,12 +6209,18 @@ export namespace Prisma {
     otherInfo?: SortOrder
     street?: SortOrder
     preference?: SortOrder
+    NIN?: SortOrder
+    driversLicense?: SortOrder
+    BVN?: SortOrder
     userId?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
   export type LandLordProfileWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    NIN?: string
+    driversLicense?: string
+    BVN?: string
     AND?: LandLordProfileWhereInput | LandLordProfileWhereInput[]
     OR?: LandLordProfileWhereInput[]
     NOT?: LandLordProfileWhereInput | LandLordProfileWhereInput[]
@@ -6181,7 +6232,7 @@ export namespace Prisma {
     preference?: EnumPreferenceFilter<"LandLordProfile"> | $Enums.Preference
     userId?: StringFilter<"LandLordProfile"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id">
+  }, "id" | "NIN" | "driversLicense" | "BVN">
 
   export type LandLordProfileOrderByWithAggregationInput = {
     id?: SortOrder
@@ -6191,6 +6242,9 @@ export namespace Prisma {
     otherInfo?: SortOrder
     street?: SortOrder
     preference?: SortOrder
+    NIN?: SortOrder
+    driversLicense?: SortOrder
+    BVN?: SortOrder
     userId?: SortOrder
     _count?: LandLordProfileCountOrderByAggregateInput
     _avg?: LandLordProfileAvgOrderByAggregateInput
@@ -6210,6 +6264,9 @@ export namespace Prisma {
     otherInfo?: StringWithAggregatesFilter<"LandLordProfile"> | string
     street?: StringWithAggregatesFilter<"LandLordProfile"> | string
     preference?: EnumPreferenceWithAggregatesFilter<"LandLordProfile"> | $Enums.Preference
+    NIN?: StringWithAggregatesFilter<"LandLordProfile"> | string
+    driversLicense?: StringWithAggregatesFilter<"LandLordProfile"> | string
+    BVN?: StringWithAggregatesFilter<"LandLordProfile"> | string
     userId?: StringWithAggregatesFilter<"LandLordProfile"> | string
   }
 
@@ -6427,6 +6484,9 @@ export namespace Prisma {
     otherInfo: string
     street: string
     preference?: $Enums.Preference
+    NIN: string
+    driversLicense: string
+    BVN: string
     user: UserCreateNestedOneWithoutLandlordsInput
   }
 
@@ -6438,6 +6498,9 @@ export namespace Prisma {
     otherInfo: string
     street: string
     preference?: $Enums.Preference
+    NIN: string
+    driversLicense: string
+    BVN: string
     userId: string
   }
 
@@ -6448,6 +6511,9 @@ export namespace Prisma {
     otherInfo?: StringFieldUpdateOperationsInput | string
     street?: StringFieldUpdateOperationsInput | string
     preference?: EnumPreferenceFieldUpdateOperationsInput | $Enums.Preference
+    NIN?: StringFieldUpdateOperationsInput | string
+    driversLicense?: StringFieldUpdateOperationsInput | string
+    BVN?: StringFieldUpdateOperationsInput | string
     user?: UserUpdateOneRequiredWithoutLandlordsNestedInput
   }
 
@@ -6459,6 +6525,9 @@ export namespace Prisma {
     otherInfo?: StringFieldUpdateOperationsInput | string
     street?: StringFieldUpdateOperationsInput | string
     preference?: EnumPreferenceFieldUpdateOperationsInput | $Enums.Preference
+    NIN?: StringFieldUpdateOperationsInput | string
+    driversLicense?: StringFieldUpdateOperationsInput | string
+    BVN?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -6470,6 +6539,9 @@ export namespace Prisma {
     otherInfo: string
     street: string
     preference?: $Enums.Preference
+    NIN: string
+    driversLicense: string
+    BVN: string
     userId: string
   }
 
@@ -6480,6 +6552,9 @@ export namespace Prisma {
     otherInfo?: StringFieldUpdateOperationsInput | string
     street?: StringFieldUpdateOperationsInput | string
     preference?: EnumPreferenceFieldUpdateOperationsInput | $Enums.Preference
+    NIN?: StringFieldUpdateOperationsInput | string
+    driversLicense?: StringFieldUpdateOperationsInput | string
+    BVN?: StringFieldUpdateOperationsInput | string
   }
 
   export type LandLordProfileUncheckedUpdateManyInput = {
@@ -6490,6 +6565,9 @@ export namespace Prisma {
     otherInfo?: StringFieldUpdateOperationsInput | string
     street?: StringFieldUpdateOperationsInput | string
     preference?: EnumPreferenceFieldUpdateOperationsInput | $Enums.Preference
+    NIN?: StringFieldUpdateOperationsInput | string
+    driversLicense?: StringFieldUpdateOperationsInput | string
+    BVN?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -6757,6 +6835,9 @@ export namespace Prisma {
     otherInfo?: SortOrder
     street?: SortOrder
     preference?: SortOrder
+    NIN?: SortOrder
+    driversLicense?: SortOrder
+    BVN?: SortOrder
     userId?: SortOrder
   }
 
@@ -6772,6 +6853,9 @@ export namespace Prisma {
     otherInfo?: SortOrder
     street?: SortOrder
     preference?: SortOrder
+    NIN?: SortOrder
+    driversLicense?: SortOrder
+    BVN?: SortOrder
     userId?: SortOrder
   }
 
@@ -6783,6 +6867,9 @@ export namespace Prisma {
     otherInfo?: SortOrder
     street?: SortOrder
     preference?: SortOrder
+    NIN?: SortOrder
+    driversLicense?: SortOrder
+    BVN?: SortOrder
     userId?: SortOrder
   }
 
@@ -7235,6 +7322,9 @@ export namespace Prisma {
     otherInfo: string
     street: string
     preference?: $Enums.Preference
+    NIN: string
+    driversLicense: string
+    BVN: string
   }
 
   export type LandLordProfileUncheckedCreateWithoutUserInput = {
@@ -7245,6 +7335,9 @@ export namespace Prisma {
     otherInfo: string
     street: string
     preference?: $Enums.Preference
+    NIN: string
+    driversLicense: string
+    BVN: string
   }
 
   export type LandLordProfileCreateOrConnectWithoutUserInput = {
@@ -7335,6 +7428,9 @@ export namespace Prisma {
     otherInfo?: StringFilter<"LandLordProfile"> | string
     street?: StringFilter<"LandLordProfile"> | string
     preference?: EnumPreferenceFilter<"LandLordProfile"> | $Enums.Preference
+    NIN?: StringFilter<"LandLordProfile"> | string
+    driversLicense?: StringFilter<"LandLordProfile"> | string
+    BVN?: StringFilter<"LandLordProfile"> | string
     userId?: StringFilter<"LandLordProfile"> | string
   }
 
@@ -7541,6 +7637,9 @@ export namespace Prisma {
     otherInfo: string
     street: string
     preference?: $Enums.Preference
+    NIN: string
+    driversLicense: string
+    BVN: string
   }
 
   export type TenantProfileUpdateWithoutUserInput = {
@@ -7582,6 +7681,9 @@ export namespace Prisma {
     otherInfo?: StringFieldUpdateOperationsInput | string
     street?: StringFieldUpdateOperationsInput | string
     preference?: EnumPreferenceFieldUpdateOperationsInput | $Enums.Preference
+    NIN?: StringFieldUpdateOperationsInput | string
+    driversLicense?: StringFieldUpdateOperationsInput | string
+    BVN?: StringFieldUpdateOperationsInput | string
   }
 
   export type LandLordProfileUncheckedUpdateWithoutUserInput = {
@@ -7592,6 +7694,9 @@ export namespace Prisma {
     otherInfo?: StringFieldUpdateOperationsInput | string
     street?: StringFieldUpdateOperationsInput | string
     preference?: EnumPreferenceFieldUpdateOperationsInput | $Enums.Preference
+    NIN?: StringFieldUpdateOperationsInput | string
+    driversLicense?: StringFieldUpdateOperationsInput | string
+    BVN?: StringFieldUpdateOperationsInput | string
   }
 
   export type LandLordProfileUncheckedUpdateManyWithoutUserInput = {
@@ -7602,6 +7707,9 @@ export namespace Prisma {
     otherInfo?: StringFieldUpdateOperationsInput | string
     street?: StringFieldUpdateOperationsInput | string
     preference?: EnumPreferenceFieldUpdateOperationsInput | $Enums.Preference
+    NIN?: StringFieldUpdateOperationsInput | string
+    driversLicense?: StringFieldUpdateOperationsInput | string
+    BVN?: StringFieldUpdateOperationsInput | string
   }
 
 

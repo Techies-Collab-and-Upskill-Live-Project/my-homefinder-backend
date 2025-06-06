@@ -157,6 +157,9 @@ exports.Prisma.LandLordProfileScalarFieldEnum = {
   otherInfo: 'otherInfo',
   street: 'street',
   preference: 'preference',
+  NIN: 'NIN',
+  driversLicense: 'driversLicense',
+  BVN: 'BVN',
   userId: 'userId'
 };
 
