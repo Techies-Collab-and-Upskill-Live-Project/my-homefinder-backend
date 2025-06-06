@@ -1,25 +1,20 @@
 import cloudinary from "../config/uploadProfileImageCloudinary"
 import fs from 'fs'
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
+import { PrismaClient } from "../../generated/prisma"
+import { tenantProfileInterface } from "../interfaces/profile.interface"
 class userProfilesCreation{
+
+    public prisma : PrismaClient
     constructor(){
-
+    this.prisma = new PrismaClient()
     }
 
-    public login = () => {
-        try {
-            
-        } catch (error) {
-            
-        }
-    }
 
 
     
-    public async createProfileTenant(image:string,body:any){
+    public async createProfileTenant(image:string,body:tenantProfileInterface){
+        console.log(body)
         const {fullName,phoneNumber,street,city,state,NIN} = body
-        //upload to cloudinary
         if(!image){throw new Error("user profile is required")}
 
 
@@ -30,22 +25,53 @@ class userProfilesCreation{
         const imageUrl = uploadedImg.secure_url
 
         fs.unlinkSync(image)
-
-
+        console.log(imageUrl)
         if(!fullName || fullName == ''){throw new Error('fullname is required')}
         if(!phoneNumber || phoneNumber == ''){throw new Error('fullname is required')}
         if(!street || street == ''){throw new Error('fullname is required')}
         if(!city || city == ''){throw new Error('fullname is required')}
         if(!state || state == ''){throw new Error('fullname is required')}
         if(!NIN || NIN == ''){throw new Error('fullname is required')}
+        // fetch user data 
+        // where userId = dskdjsdj
+        const user = await this.prisma.user.findUnique({
+            where:{id : "dskdjsdj"}
+        })
+        if(!user){
+            throw new Error("user dows not exist")
+        }
+        const checkProfile = await this.prisma.tenantProfile.findFirst({
+            where:{userId : user.id}
+        })
+        if(checkProfile){
+            throw new Error("profile already exists");
+        }
+        const tenantProfile = await this.prisma.tenantProfile.create({
+            data: {
+                profileImage: imageUrl,
+        fullName: fullName,
+        phoneNumber: phoneNumber,
+        street: street,
+        city: city,
+        state: state,
+        NIN: NIN,
+        user: {
+          connect: { id: user.id }
+        }
+            }
+        })
+
+        // if(!tenantProfile){
+        //     throw new Error("an error occued, couldn't create user profile");
+            
+        // }
         // upload to psql database
 
-        return 'succesfully created user profile'
+        return {message:'succesfully created user profile',tenantProfile}
     }
 
     public async createProfileLandlord(image:string,body:any){
         const {typeOfHouse,numberOfRooms,otherInfo,street,preferences,NIN,driversLicense,BVN} = body
-        //upload to cloudinary
         if(!image){throw new Error("user profile is required")}
 
 
@@ -73,6 +99,5 @@ class userProfilesCreation{
     
 }
 
-const profileCreation = new userProfilesCreation()
 
-export default profileCreation
+export default userProfilesCreation

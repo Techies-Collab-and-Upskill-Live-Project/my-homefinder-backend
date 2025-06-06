@@ -1,17 +1,17 @@
 import express from "express"
 import upload from "../middlewares/upload"
 import userProfileController from "../controllers/profileCreation.controller";
-class Routes {
-    public UserRouter: express.Router
+import { Router } from "express";
+import { Routes } from "../interfaces/route.interface";
+class UserRoutes implements Routes {
+  public router = Router();
 
-    constructor() {
-            this.UserRouter = express.Router();
-    }
+  constructor() {
+    this.initializeRoutes();
+  }
 
-    public routeUser = () => {
-        this.UserRouter.post('/createProfile?user=tenant',upload.single('image'),userProfileController.createProfile)
-        this.UserRouter.post('/createProfile?user=landlord',upload.single('image'))
-    }
-
-    
+  private initializeRoutes() {
+    this.router.post("/createProfile", upload.single("image"), userProfileController.createProfile);
+  }
 }
+export default UserRoutes;

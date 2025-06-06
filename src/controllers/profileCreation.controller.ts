@@ -1,5 +1,6 @@
 import { Request,Response } from "express"
-import profileCreation from "../services/userProfileCreation.service"
+import userProfilesCreation from "../services/userProfileCreation.service"
+const profileCreation = new userProfilesCreation
 class usercontroller{
     public createProfile = async (req:Request,res:Response) => {
        try {

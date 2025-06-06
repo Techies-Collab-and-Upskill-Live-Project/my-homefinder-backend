@@ -30,7 +30,7 @@ model User {
   roleId     Int
   role       Role     @relation(fields: [roleId], references: [id])
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  updatedAt  DateTime @updatedAt @default(now())
   tenants TenantProfile[]
   landlords LandLordProfile[]
 }
