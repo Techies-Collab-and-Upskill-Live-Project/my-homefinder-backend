@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import HTTPException from "../exceptions/http.exception";
 import { isEmpty } from "../utils/isEmpty.util";
-import { PrismaClient, User } from "../../generated/prisma";
+import { PrismaClient, User } from "@prisma/client";
 import { comparePassword, hashPassword } from "../utils/hash.util";
 import {
   loginDataType,

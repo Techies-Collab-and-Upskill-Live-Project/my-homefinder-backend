@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { MulterFile } from "../interfaces/multerFile.interface";
-import { renterIdDetails } from "../interfaces/response.interface";
+import { RequestWithUser } from "../interfaces/auth.interface";
 import { UploadService } from "../services/upload.service";
 
 export class UploadController {
@@ -12,12 +12,12 @@ export class UploadController {
   }
 
   public uploadDoc = async (
-    req: Request,
+    req: RequestWithUser,
     res: Response,
     next: NextFunction,
   ) => {
     try {
-      const userId = req.user.id;
+      const userId = req.user?.id as string;
       const file = req.file as MulterFile;
       const userDocument = this.uploadService.saveDocToDB(file, userId);
       if (!file) {
