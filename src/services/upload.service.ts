@@ -1,9 +1,7 @@
 import { StatusCodes } from "http-status-codes";
-import { PrismaClient } from "../../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import HTTPException from "../exceptions/http.exception";
 import { MulterFile } from "../interfaces/multerFile.interface";
-import { renterIdDetails } from "../interfaces/response.interface";
-import { idAnalyzer } from "../utils/idAnalyzer.utils";
 
 export class UploadService {
   private prisma: PrismaClient;
@@ -27,5 +25,25 @@ export class UploadService {
       throw new HTTPException(StatusCodes.NOT_FOUND, "Document not Found");
     }
     return userDoucment;
+  };
+
+  public saveMultipleDocsToDB = async (files: MulterFile[], userid: string) => {
+    if (!files || files.length === 0)
+      throw new HTTPException(StatusCodes.BAD_REQUEST, "Files are missing");
+    const fileDataArray: { userId: string; fileName: string; fileUrl: string }[] = [];
+    for (const file of files) {
+      const fileData = {
+        userId: userid,
+        fileName: file.filename,
+        fileUrl: file.path,
+      };
+      fileDataArray.push(fileData);
+    }
+
+    const userDocuments = await this.prisma.userDocument.createMany({
+      data: fileDataArray,
+    });
+
+    return userDocuments;
   };
 }

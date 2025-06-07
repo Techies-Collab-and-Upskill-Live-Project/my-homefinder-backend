@@ -7,7 +7,7 @@ import { CREDENTIALS, PORT } from "./config";
 import errorMiddleware from "./middlewares/error.middleware";
 import { notFoundError } from "./middlewares/notfound.middleware";
 import { Routes } from "./interfaces/route.interface";
-import { PrismaClient } from "../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 
 class App {
   public port: number;

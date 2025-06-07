@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { VerificationService } from "../services/verification.service";
 import { StatusCodes } from "http-status-codes";
 
-class VerificationController {
+export class VerificationController {
   private verificationService: VerificationService;
 
   constructor() {
