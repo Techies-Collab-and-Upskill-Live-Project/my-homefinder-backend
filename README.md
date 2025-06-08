@@ -28,7 +28,7 @@ The MVP backend includes:
 
 - [x] Project scaffolded with Express + TypeScript
 - [x] Basic folder structure (`src/`)
-- [ ] Authentication routes
+- [x] Authentication routes
 - [ ] Property listing routes
 - [x] PostgreSQL setup
 - [ ] Validation middleware
@@ -51,15 +51,23 @@ The MVP backend includes:
 ## 🧪 Setup & Development
 
 ```bash
-# Clone the repo
-git clone https://github.com/Techies-Collab-and-Upskill-Live-Project/my-homefinder-backend.git
+# Fork the repo to your GitHub account and then clone your fork
+git clone https://github.com/<your-username>/my-homefinder-backend.git
 cd my-homefinder-backend
 
 # Install dependencies
 npm install
 
+# Create .env file from sample and update with your settings
+cp .env.template .env
+
+# Open `.env` and update the DATABASE_URL and other env variables accordingly
+
 # Database Migration
-npx prisma migrate dev
+npx prisma migrate dev --name init
+
+# Generate Prisma client
+npx prisma generate
 
 # Start development server
 npm run dev
