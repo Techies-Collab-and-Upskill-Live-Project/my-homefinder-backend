@@ -36,6 +36,10 @@ model User {
   passwordResetTokens PasswordResetToken[]
   UserDocument        UserDocument[]
   properties          Property[]
+
+  //landlord and tenant profile
+  tenants TenantProfile[]
+  landlords LandLordProfile[]
 }
 
 model PasswordResetToken {
@@ -103,20 +107,6 @@ model Role {
   users User[]
 }
 
-model User {
-  id         String   @id @default(uuid())
-  fullName   String
-  email      String   @unique
-  phone      String   @unique
-  password   String
-  isVerified Boolean  @default(false)
-  roleId     Int
-  role       Role     @relation(fields: [roleId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt @default(now())
-  tenants TenantProfile[]
-  landlords LandLordProfile[]
-}
 
 model TenantProfile {
   id  Int @id @default(autoincrement())
