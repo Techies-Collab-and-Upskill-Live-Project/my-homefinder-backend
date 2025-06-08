@@ -16,7 +16,7 @@ export class PropertyRoute implements Routes {
     this.router.get(
       `${this.path}/location`,
       authMiddleware,
-      this.propertyController.getPropertiesInLoaction,
+      this.propertyController.getPropertiesInLocation,
     );
 
     this.router.get(

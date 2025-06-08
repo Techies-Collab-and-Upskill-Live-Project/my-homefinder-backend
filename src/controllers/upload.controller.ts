@@ -33,4 +33,25 @@ export class UploadController {
       next(error);
     }
   };
+
+  public uploadMultipleDocs = async (
+    req: RequestWithUser,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const userId = req.user?.id as string;
+      const files = req.files as MulterFile[];
+      const userDocuments = await this.uploadService.saveMultipleDocsToDB(
+        files,
+        userId,
+      );
+      res.status(StatusCodes.CREATED).json({
+        message: "Files uploaded successfully",
+        data: userDocuments,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

@@ -10,7 +10,7 @@ export class PropertyController {
     this.propertyService = new PropertyService();
   }
 
-  public getPropertiesInLoaction = async (
+  public getPropertiesInLocation = async (
     req: RequestWithUser,
     res: Response,
     next: NextFunction,
