@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  //output   = "../generated/prisma"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -101,11 +101,6 @@ enum PropertyType {
   OFFICE
 }
 
-model Role {
-  id    Int     @id @default(autoincrement())
-  name  String  @unique
-  users User[]
-}
 
 
 model TenantProfile {
