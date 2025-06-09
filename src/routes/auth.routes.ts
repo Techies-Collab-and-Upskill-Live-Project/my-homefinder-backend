@@ -10,7 +10,6 @@ import {
   resetPasswordLimiter,
 } from "../middlewares/rate-limiter.middleware";
 import { asyncHandler } from "../utils/asyncHandler.util";
-import { authMiddleware } from "../middlewares/auth.middleware";
 
 export class AuthRoute implements Routes {
   public path = "/api/v1/auth";
@@ -24,7 +23,6 @@ export class AuthRoute implements Routes {
   private initializeRoutes() {
     this.router.post(
       `${this.path}/forgot-password`,
-      authMiddleware,
       forgotPasswordLimiter,
       validateForgotPassword,
       asyncHandler(this.authController.forgotPassword),
@@ -32,7 +30,6 @@ export class AuthRoute implements Routes {
 
     this.router.post(
       `${this.path}/reset-password`,
-      authMiddleware,
       resetPasswordLimiter,
       validateResetPassword,
       asyncHandler(this.authController.resetPassword),
