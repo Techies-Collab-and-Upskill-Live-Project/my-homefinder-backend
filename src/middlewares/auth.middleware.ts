@@ -3,7 +3,7 @@ import { JWT_SECRET } from "../config";
 import { verify } from "jsonwebtoken";
 import { DataStoreInJWT, RequestWithUser } from "../interfaces/auth.interface";
 import HTTPException from "../exceptions/http.exception";
-import { PrismaClient } from "../../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { StatusCodes } from "http-status-codes";
 
 export const authMiddleware = async (
