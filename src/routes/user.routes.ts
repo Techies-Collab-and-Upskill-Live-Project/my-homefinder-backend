@@ -9,10 +9,10 @@ class UserRoutes implements Routes {
   constructor() {
     this.initializeRoutes();
   }
-  // create profile eendpoint will be lie /createProfile/iegqetye?user=tenent, can also be ?user=landlord
+  // create profile eendpoint will be lie /createProfile/userId?user=tenent, can also be ?user=landlord
   private initializeRoutes() {
     this.router.post("/createProfile/:userId", upload.single("image"), userProfileController.createProfile);
-    this.router.patch("updateProfile/:userId", upload.single("image"), userProfileController.updateProfile)
+    this.router.patch("/updateProfile/:userId", upload.single("image"), userProfileController.updateProfile)
   }
 }
 export default UserRoutes;

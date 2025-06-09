@@ -27,8 +27,27 @@ class updateProfiles {
         return updatePrisma
     }
 
-    public async updateLandordProfile(){
-        //updating landlord profile logic
+    public async updateLandordProfile(image:any,body:any,userId:string){
+        const {typeOfHouse,numberOfRooms,otherInfo,street,preference,NIN,driversLicense,BVN} = body
+        const update:any = {
+            ...(image && {profileImage:image}),
+            ...(typeOfHouse && {typeOfHouse: typeOfHouse}),
+            ...(numberOfRooms && {numberOfRooms: numberOfRooms}),
+            ...(otherInfo && {otherInfo: otherInfo}),
+            ...(street && {street: street}),
+            ...(preference && {preference: preference}),
+            ...(NIN && {NIN: NIN}),
+            ...(driversLicense && {driversLicense: driversLicense}),
+            ...(BVN && {BVN: BVN}),
+        }
+        const updatePrisma = await this.prisma.tenantProfile.updateMany({
+            where:{
+                userId : userId
+            },
+            data:update
+        })
+        console.log(updatePrisma)
+        return updatePrisma
     }
 }
 
