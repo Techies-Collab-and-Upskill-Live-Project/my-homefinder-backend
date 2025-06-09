@@ -1,5 +1,5 @@
 // service for updating profiles
-import { PrismaClient } from "../../generated/prisma";
+import { PrismaClient } from '@prisma/client';
 class updateProfiles {
     public prisma : PrismaClient
     constructor () {

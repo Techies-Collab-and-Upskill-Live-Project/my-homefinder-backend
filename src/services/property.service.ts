@@ -1,4 +1,4 @@
-import { PrismaClient } from ".prisma/client";
+import { PrismaClient } from '@prisma/client';
 import HTTPException from "../exceptions/http.exception";
 import { StatusCodes } from "http-status-codes";
 import { geocodeAddress } from "../utils/geocode.util";
@@ -10,7 +10,48 @@ export class PropertyService {
     this.prisma = new PrismaClient();
   }
 
-  // get Propetties in a specific location with a given radius
+  public createProperty = async (data: any) => {
+    const property = await this.prisma.property.create({ data });
+    return property;
+  };
+
+  public getPropertyById = async (id: string) => {
+    const property = await this.prisma.property.findUnique({
+      where: { id },
+    });
+    return property;
+  };
+
+  public updateProperty = async (id: string, userId: string, data: any) => {
+    const property = await this.prisma.property.findUnique({ where: { id } });
+    if (!property) {
+      throw new HTTPException(StatusCodes.NOT_FOUND, "Property not found");
+    }
+    if (property.landlordId !== userId) {
+      throw new HTTPException(StatusCodes.FORBIDDEN, "Unauthorized");
+    }
+    const updated = await this.prisma.property.update({
+      where: { id },
+      data,
+    });
+    return updated;
+  };
+
+  public softDeleteProperty = async (id: string, userId: string) => {
+    const property = await this.prisma.property.findUnique({ where: { id } });
+    if (!property) {
+      throw new HTTPException(StatusCodes.NOT_FOUND, "Property not found");
+    }
+    if (property.landlordId !== userId) {
+      throw new HTTPException(StatusCodes.FORBIDDEN, "Unauthorized");
+    }
+    await this.prisma.property.update({
+      where: { id },
+      data: { deleted: true },
+    });
+  };
+
+  // get Properties in a specific location with a given radius
   public getPropertiesInLocation = async (location: string, radius: number) => {
     if (!location || typeof location !== "string") {
       throw new HTTPException(StatusCodes.BAD_REQUEST, "Invalid location");
@@ -32,7 +73,7 @@ export class PropertyService {
       ) AS subquery
       WHERE distance < ${radius}
       ORDER BY distance ASC
-`;
+    `;
     return properties;
   };
 
@@ -59,7 +100,7 @@ export class PropertyService {
       ) AS subquery
       WHERE distance < ${radius}
       ORDER BY distance ASC
-      `;
+    `;
     return properties;
   };
 }
