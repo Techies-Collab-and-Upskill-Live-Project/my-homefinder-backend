@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  //output = "node_modules/@prisma/client"
 }
 
 datasource db {
@@ -93,7 +93,8 @@ model Property {
   deleted     Boolean      @default(false)
 
   // future support for messages, documents, bookings
-  messages      Message[]  @relation("PropertyMessages")
+
+ messages      Message[]  @relation("PropertyMessages")
 }
 
 enum PropertyType {
@@ -141,7 +142,6 @@ model Message {
   content     String
   propertyId  String?
   createdAt   DateTime @default(now())
-
   sender    User    @relation("SentMessages", fields: [senderId], references: [id])
   receiver  User    @relation("ReceivedMessages", fields: [receiverId], references: [id])
   property  Property? @relation("PropertyMessages",fields: [propertyId], references: [id])

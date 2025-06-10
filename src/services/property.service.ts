@@ -264,7 +264,7 @@ private prisma: typeof prisma;
           }
         });
   
-        return typeCounts.map(item => ({
+        return typeCounts.map((item: any) => ({
           type: item.type,
           count: item._count.type
         }));
