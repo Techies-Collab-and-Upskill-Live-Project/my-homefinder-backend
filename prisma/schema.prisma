@@ -93,6 +93,7 @@ model Property {
   deleted     Boolean      @default(false)
 
   // future support for messages, documents, bookings
+
  messages      Message[]  @relation("PropertyMessages")
 }
 
