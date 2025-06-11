@@ -3,6 +3,8 @@ import upload from "../middlewares/upload"
 import userProfileController from "../controllers/profileCreation.controller";
 import { Router } from "express";
 import { Routes } from "../interfaces/route.interface";
+import tenantAccess from "../middlewares/tenantAccess.middleware";
+import landLordAccess from "../middlewares/landLordAccess.middleware";
 class UserRoutes implements Routes {
   public router = Router();
 
@@ -10,9 +12,13 @@ class UserRoutes implements Routes {
     this.initializeRoutes();
   }
   // create profile eendpoint will be lie /createProfile/userId?user=tenent, can also be ?user=landlord
+  //same as that of update profile
+
   private initializeRoutes() {
     this.router.post("/createProfile/:userId", upload.single("image"), userProfileController.createProfile);
     this.router.patch("/updateProfile/:userId", upload.single("image"), userProfileController.updateProfile)
+    this.router.get("/getTenantProfile/:userId",tenantAccess,userProfileController.getProfile)
+    this.router.get("/getLandlordProfile/:userId",landLordAccess,userProfileController.getProfile)
   }
 }
 export default UserRoutes;
