@@ -29,6 +29,7 @@ class updateProfiles {
 
     public async updateLandordProfile(image:any,body:any,userId:string){
         const {typeOfHouse,numberOfRooms,otherInfo,street,preference,NIN,driversLicense,BVN} = body
+        console.log(body)
         const update:any = {
             ...(image && {profileImage:image}),
             ...(typeOfHouse && {typeOfHouse: typeOfHouse}),
@@ -40,13 +41,12 @@ class updateProfiles {
             ...(driversLicense && {driversLicense: driversLicense}),
             ...(BVN && {BVN: BVN}),
         }
-        const updatePrisma = await this.prisma.tenantProfile.updateMany({
+        const updatePrisma = await this.prisma.landLordProfile.updateMany({
             where:{
                 userId : userId
             },
             data:update
         })
-        console.log(updatePrisma)
         return updatePrisma
     }
 }

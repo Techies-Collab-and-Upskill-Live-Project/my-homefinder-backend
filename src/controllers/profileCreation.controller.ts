@@ -47,6 +47,7 @@ class usercontroller{
         const image = req.file?.path
         const userID = req.params.userId
         const user = req.query.user
+        console.log(user)
 
         if(user == "tenant"){
             try {
@@ -55,13 +56,14 @@ class usercontroller{
                 res.status(200).json({
                     success:true,
                     message:"user profile updated successfully",
-                    data:updateProfile
+                    data:updateTenantProfile
                 })
             } catch (error) {
                 if(error){
+                console.log(error)
                     res.status(404).json({
                         succes:false,
-                        message:"an error occured, couldn't uodate tenant profile",
+                        message:"an error occured, couldn't update tenant profile",
                         data:error
                     })
                 }
@@ -72,14 +74,14 @@ class usercontroller{
         if(user == "landlord"){
             try {
                 const updateLandlordProfile = await updateProfile.updateLandordProfile(image,body,userID)
-                console.log(updateLandlordProfile)
                 res.status(200).json({
                     success:true,
                     message:"user profile updated successfully",
-                    data:updateProfile
+                    data:updateLandlordProfile
                 })
             } catch (error) {
                 if(error){
+                    console.log(error)
                     res.status(404).json({
                         succes:false,
                         message:"an error occured, couldn't update landlord profile",
@@ -92,8 +94,8 @@ class usercontroller{
 
     public getProfile = async (req:Request,res:Response) => {
         const userId = req.params.userId
-        const user = req.query.user
-        if(user == 'tenant'){
+        const user = req.user
+        if(user == 'Tenant'){
             try {
                 const tenantProfile = await getProfileInstance.getTenantProfie(userId)
                 res.status(200).json({
@@ -113,7 +115,7 @@ class usercontroller{
             }
         }
 
-        if(user == 'landlord'){
+        if(user == 'Landlord'){
             try {
                 const landlordProfile = await getProfileInstance.getLandlordProfie(userId)
                 res.status(200).json({

@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { PrismaClient } from "../../generated/prisma";
 const prisma = new PrismaClient()
+interface Error {
+    message:string
+}
 
 const tenantAccess = async (req:Request,res:Response,next:NextFunction) => {
     try {
@@ -20,15 +23,17 @@ const tenantAccess = async (req:Request,res:Response,next:NextFunction) => {
         throw new Error("role has not been assigned")
     }
     const role  = roleResponse.name
+    console.log(role)
     
     if(role != 'tenant'){
         throw new Error("unauthorized access")
     }
-    } catch (error) {
+    req.user = role
+    } catch (error:any) {
         res.status(404).json({
             success:false,
             message:'an error occured',
-            data:error
+            data:error.message
         })
     }
     next()

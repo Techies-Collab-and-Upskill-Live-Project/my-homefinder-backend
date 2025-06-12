@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { PrismaClient } from "../../generated/prisma";
 const prisma = new PrismaClient()
 
+
 const landLordAccess = async (req:Request,res:Response,next:NextFunction) => {
     try {
         //query database for role info;
@@ -21,14 +22,15 @@ const landLordAccess = async (req:Request,res:Response,next:NextFunction) => {
     }
     const role  = roleResponse.name
     
-    if(role != 'landlord'){
+    if(role != 'Landlord'){
         throw new Error("unauthorized access")
     }
-    } catch (error) {
+    req.user = role
+    } catch (error:any) {
         res.status(404).json({
             success:false,
             message:'an error occured',
-            data:error
+            data:error.message
         })
     }
     next()
