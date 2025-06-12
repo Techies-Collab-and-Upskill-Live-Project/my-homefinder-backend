@@ -3,7 +3,9 @@ import upload from "../middlewares/upload"
 import userProfileController from "../controllers/profileCreation.controller";
 import { Router } from "express";
 import { Routes } from "../interfaces/route.interface";
+
 class UserRoutes implements Routes {
+  public path ="/api/v1/users"
   public router = Router();
 
   constructor() {
