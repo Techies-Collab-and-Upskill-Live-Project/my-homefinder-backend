@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+// import { User } from "@prisma/client";
 import { Request } from "express";
 
 export interface ForgotPasswordRequest {
@@ -22,7 +22,11 @@ export interface loginDataType {
 }
 
 export interface RequestWithUser extends Request {
-  user?: User;
+  user:{
+    id: string;
+    role?: string;
+    [key: string]: any;
+  }
 }
 
 export interface DataStoreInJWT {

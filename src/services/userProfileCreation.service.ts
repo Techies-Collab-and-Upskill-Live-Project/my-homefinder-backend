@@ -1,6 +1,6 @@
 import cloudinary from "../config/uploadProfileImageCloudinary"
 import fs from 'fs'
-import { PrismaClient } from "../../generated/prisma"
+import { PrismaClient } from '@prisma/client'
 import { tenantProfileInterface } from "../interfaces/profile.interface"
 class userProfilesCreation{
 
