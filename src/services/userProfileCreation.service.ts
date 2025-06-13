@@ -38,7 +38,7 @@ class userProfilesCreation{
             where:{id : "dskdjsdj"}
         })
         if(!user){
-            throw new Error("user dows not exist")
+            throw new Error("user does not exist")
         }
         const checkProfile = await this.prisma.tenantProfile.findFirst({
             where:{userId : user.id}
@@ -66,6 +66,7 @@ class userProfilesCreation{
     }
 
     public async createProfileLandlord(image:string,body:any){
+        console.log(body)
         const {typeOfHouse,numberOfRooms,otherInfo,street,preferences,NIN,driversLicense,BVN} = body
         
         if(!image){throw new Error("user profile is required")}

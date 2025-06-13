@@ -1,6 +1,7 @@
 import { Request,Response } from "express"
 import userProfilesCreation from "../services/userProfileCreation.service"
 import updateProfile from "../services/updateProfile.service"
+import getProfileInstance from "../services/getProfile.service"
 const profileCreation = new userProfilesCreation
 class usercontroller{
     public createProfile = async (req:Request,res:Response) => {
@@ -46,6 +47,7 @@ class usercontroller{
         const image = req.file?.path
         const userID = req.params.userId
         const user = req.query.user
+        console.log(user)
 
         if(user == "tenant"){
             try {
@@ -54,18 +56,85 @@ class usercontroller{
                 res.status(200).json({
                     success:true,
                     message:"user profile updated successfully",
-                    data:updateProfile
+                    data:updateTenantProfile
                 })
             } catch (error) {
                 if(error){
+                console.log(error)
                     res.status(404).json({
                         succes:false,
-                        message:"an error occured, couldn't uodate tenant profile",
+                        message:"an error occured, couldn't update tenant profile",
                         data:error
                     })
                 }
             }
         }
+
+
+        if(user == "landlord"){
+            try {
+                const updateLandlordProfile = await updateProfile.updateLandordProfile(image,body,userID)
+                res.status(200).json({
+                    success:true,
+                    message:"user profile updated successfully",
+                    data:updateLandlordProfile
+                })
+            } catch (error) {
+                if(error){
+                    console.log(error)
+                    res.status(404).json({
+                        succes:false,
+                        message:"an error occured, couldn't update landlord profile",
+                        data:error
+                    })
+                }
+            }
+        }
+    }
+
+    public getProfile = async (req:Request,res:Response) => {
+        const userId = req.params.userId
+        const user = req.user
+        if(user == 'Tenant'){
+            try {
+                const tenantProfile = await getProfileInstance.getTenantProfie(userId)
+                res.status(200).json({
+                    success:true,
+                    message:"tenant profile gotten successfully",
+                    data:tenantProfile
+                })
+            } catch (error) {
+                if(error as Error){
+                    res.status(404).json({
+                    success:false,
+                    message:"an error occured",
+                    data:error
+                    })
+                }
+                
+            }
+        }
+
+        if(user == 'Landlord'){
+            try {
+                const landlordProfile = await getProfileInstance.getLandlordProfie(userId)
+                res.status(200).json({
+                    success:true,
+                    message:"landlord profile gotten successfully",
+                    data:landlordProfile
+                })
+            } catch (error) {
+                if(error as Error){
+                    res.status(404).json({
+                    success:false,
+                    message:"an error occured",
+                    data:error
+                })
+                }
+                
+            }
+        }
+
     }
 
     

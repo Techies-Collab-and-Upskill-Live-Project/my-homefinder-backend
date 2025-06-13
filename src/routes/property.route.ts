@@ -5,6 +5,7 @@ import { PropertyController } from '../controllers/property.controller';
 import { PropertyValidationMiddleware } from '../middlewares/property-validation.middleware';
 import { authMiddleware } from "../middlewares/auth.middleware";
 import asyncHandler from "express-async-handler";
+import search from '../controllers/search.controller';
 
 const router = Router();
 const propertyController = new PropertyController();
@@ -89,5 +90,8 @@ router.get('/types', propertyController.getPropertyTypes.bind(propertyController
 // Get price statistics
 // GET /api/properties/price-stats
 router.get('/price-stats', propertyController.getPriceStatistics.bind(propertyController));
+
+// get property by city or area
+router.get("/searchProperties/:search",search.searchFunction)
 
 export default router;
