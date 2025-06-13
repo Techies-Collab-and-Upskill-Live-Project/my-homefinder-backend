@@ -33,7 +33,6 @@ model User {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  reposts RepostHistory[]
 
   // Password reset tokens
   passwordResetTokens PasswordResetToken[]
@@ -92,10 +91,6 @@ model Property {
   updatedAt   DateTime     @updatedAt
   deleted     Boolean      @default(false)
 
-  //Repost relations
-  repostedFrom RepostHistory[] @relation("OriginalProperty")
-  repostedTo   RepostHistory[] @relation("RepostedProperty")
-
   // future support for messages, documents, bookings
   //messages      Message[]
   reviews Review[]
@@ -143,19 +138,6 @@ enum Preference {
   both
 }
 
-model RepostHistory {
-  id                 String   @id @default(uuid())
-  originalPropertyId String
-  repostedPropertyId String
-  userId             String
-  changeLog          Json
-  repostDate         DateTime @default(now())
-
-  // Relations
-  originalProperty Property @relation("OriginalProperty", fields: [originalPropertyId], references: [id])
-  repostedProperty Property @relation("RepostedProperty", fields: [repostedPropertyId], references: [id])
-  user             User     @relation(fields: [userId], references: [id])
-}
 
 enum StarRating {
   ONE    @map("1")
