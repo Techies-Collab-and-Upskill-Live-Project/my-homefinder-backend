@@ -21,16 +21,18 @@ model Role {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  fullName   String
-  email      String   @unique
-  phone      String   @unique
-  password   String
-  isVerified Boolean  @default(false)
-  roleId     Int
-  role       Role     @relation(fields: [roleId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id              String   @id @default(uuid())
+  fullName        String
+  email           String   @unique
+  phone           String   @unique
+  password        String
+  isVerified      Boolean  @default(false)
+  roleId          Int
+  role            Role     @relation(fields: [roleId], references: [id])
+  reviewsGiven Review[] @relation("Reviewer")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
 
   // Password reset tokens
   passwordResetTokens PasswordResetToken[]
@@ -38,7 +40,7 @@ model User {
   properties          Property[]
 
   //landlord and tenant profile
-  tenants TenantProfile[]
+  tenants   TenantProfile[]
   landlords LandLordProfile[]
 
   sentMessages     Message[] @relation("SentMessages")
@@ -93,8 +95,9 @@ model Property {
   deleted     Boolean      @default(false)
 
   // future support for messages, documents, bookings
+  reviews Review[]
 
- messages      Message[]  @relation("PropertyMessages")
+  messages      Message[]  @relation("PropertyMessages")
 }
 
 enum PropertyType {
@@ -105,34 +108,32 @@ enum PropertyType {
   OFFICE
 }
 
-
-
 model TenantProfile {
-  id  Int @id @default(autoincrement())
+  id           Int    @id @default(autoincrement())
   profileImage String
-  fullName String
-  phoneNumber String @unique
-  street String
-  city String
-  state String
-  NIN String @unique
-  userId String
-  user User @relation(fields: [userId], references: [id])
+  fullName     String
+  phoneNumber  String @unique
+  street       String
+  city         String
+  state        String
+  NIN          String @unique
+  userId       String
+  user         User   @relation(fields: [userId], references: [id])
 }
 
 model LandLordProfile {
-  id Int @id @default(autoincrement())
-  profileImage String
-  typeOfHouse String
-  numberOfRooms String
-  otherInfo String
-  street String
-  preference Preference @default(calls)
-  NIN String @unique
-  driversLicense String @unique
-  BVN String @unique
-  userId String
-  user User @relation(fields: [userId], references: [id]) 
+  id             Int        @id @default(autoincrement())
+  profileImage   String
+  typeOfHouse    String
+  numberOfRooms  String
+  otherInfo      String
+  street         String
+  preference     Preference @default(calls)
+  NIN            String     @unique
+  driversLicense String     @unique
+  BVN            String     @unique
+  userId         String
+  user           User       @relation(fields: [userId], references: [id])
 }
 
 model Message {
@@ -151,4 +152,26 @@ enum Preference {
   calls
   chat
   both
+}
+
+
+enum StarRating {
+  ONE    @map("1")
+  TWO    @map("2")
+  THREE  @map("3")
+  FOUR   @map("4")
+  FIVE   @map("5")
+}
+
+model Review {
+  id          String     @id @default(uuid())
+  reviewerId  String
+  propertyId  String   
+  rating      StarRating
+  comment     String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  reviewer    User       @relation("Reviewer", fields: [reviewerId], references: [id])
+  property    Property   @relation(fields: [propertyId], references: [id])
 }

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { PropertyType } from '@prisma/client';
+import { PropertyType } from '../../generated/prisma'; 
 
 export interface ValidationError {
   field: string;

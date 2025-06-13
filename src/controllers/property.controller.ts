@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { RequestWithUser } from "../interfaces/auth.interface";
 import { PropertyService } from "../services/property.service";
 import { StatusCodes } from "http-status-codes";
-import { PropertyType } from '@prisma/client';
+import { PropertyType } from '../../generated/prisma';
 import { PropertyFilters, PropertyQueryOptions } from '../interfaces/property.interface';
 
 export class PropertyController {
