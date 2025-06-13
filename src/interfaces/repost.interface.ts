@@ -18,5 +18,5 @@ export interface RepostHistory {
   repostedPropertyId: string;
   repostDate: Date;
   userId: string;
-  changes?: Record<string, any>;
+  changeLog?: Record<string, any>;
 }
