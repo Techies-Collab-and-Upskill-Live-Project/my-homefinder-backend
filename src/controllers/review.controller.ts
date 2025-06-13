@@ -18,8 +18,10 @@ export class ReviewController {
   ): Promise<void> => {
     try {
       const reviewData: CreateReviewInput = {
-        ...req.body,
-        reviewerId: req.user.id, // Assuming auth middleware sets user
+        reviewerId: req.user.id,
+        propertyId: req.params.propertyId,
+        rating: req.body.rating,
+        comment: req.body.comment
       };
 
       const review = await this.reviewService.createReview(reviewData);
@@ -34,28 +36,15 @@ export class ReviewController {
     }
   };
 
-  public getReviews = async (
+  public getPropertyReviews = async (
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { userId, propertyId } = req.query;
+      const { propertyId } = req.params;
       
-      if (!userId && !propertyId) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-          success: false,
-          message: 'Either userId or propertyId must be provided',
-        });
-        return;
-      }
-
-      const filter = {
-        ...(userId && { userId: String(userId) }),
-        ...(propertyId && { propertyId: String(propertyId) }),
-      };
-
-      const reviews = await this.reviewService.getReviews(filter);
+      const reviews = await this.reviewService.getReviews({ propertyId });
       
       res.status(StatusCodes.OK).json({
         success: true,

@@ -1,32 +1,43 @@
 import { prisma } from '../prisma/prisma';
-import { CreateReviewInput, ReviewFilter } from '../interfaces/review.interface';
+import { CreateReviewInput, ReviewFilter, StarRating } from '../interfaces/review.interface';
 import HTTPException from '../exceptions/http.exception';
 import { StatusCodes } from 'http-status-codes';
 
 export class ReviewService {
   async createReview(data: CreateReviewInput) {
-    // Validate rating range
-    if (data.rating < 1 || data.rating > 5) {
-      throw new HTTPException(StatusCodes.BAD_REQUEST, 'Rating must be between 1 and 5');
-    }
+    // Validate property exists
+    const property = await prisma.property.findUnique({
+      where: { id: data.propertyId }
+    });
 
-    // Ensure exactly one target (user or property) is specified
-    if ((!data.userId && !data.propertyId) || (data.userId && data.propertyId)) {
-      throw new HTTPException(
-        StatusCodes.BAD_REQUEST,
-        'Review must target either a user or a property'
-      );
+    if (!property) {
+      throw new HTTPException(StatusCodes.NOT_FOUND, 'Property not found');
     }
 
     try {
       const review = await prisma.review.create({
         data,
         include: {
-          reviewer: true,
-          user: true,
-          property: true,
+          reviewer: {
+            select: {
+              id: true,
+              fullName: true,
+              email: true
+            }
+          },
+          property: {
+            select: {
+              id: true,
+              title: true,
+              address: true
+            }
+          }
         },
       });
+
+      // Update property's average rating
+      await this.updatePropertyAverageRating(data.propertyId);
+
       return review;
     } catch (error) {
       throw new HTTPException(
@@ -41,9 +52,19 @@ export class ReviewService {
       const reviews = await prisma.review.findMany({
         where: filter,
         include: {
-          reviewer: true,
-          user: true,
-          property: true,
+          reviewer: {
+            select: {
+              id: true,
+              fullName: true
+            }
+          },
+          property: {
+            select: {
+              id: true,
+              title: true,
+              address: true
+            }
+          }
         },
         orderBy: { createdAt: 'desc' },
       });
@@ -56,37 +77,15 @@ export class ReviewService {
     }
   }
 
-  async getUserAverageRating(userId: string): Promise<number> {
-    try {
-      const result = await prisma.review.aggregate({
-        where: { userId },
-        _avg: {
-          rating: true,
-        },
-      });
-      return result._avg.rating || 0;
-    } catch (error) {
-      throw new HTTPException(
-        StatusCodes.INTERNAL_SERVER_ERROR,
-        'Failed to calculate average rating'
-      );
-    }
-  }
+  private async updatePropertyAverageRating(propertyId: string) {
+    const avgRating = await prisma.review.aggregate({
+      where: { propertyId },
+      _avg: { rating: true }
+    });
 
-  async getPropertyAverageRating(propertyId: string): Promise<number> {
-    try {
-      const result = await prisma.review.aggregate({
-        where: { propertyId },
-        _avg: {
-          rating: true,
-        },
-      });
-      return result._avg.rating || 0;
-    } catch (error) {
-      throw new HTTPException(
-        StatusCodes.INTERNAL_SERVER_ERROR,
-        'Failed to calculate average rating'
-      );
-    }
+    await prisma.property.update({
+      where: { id: propertyId },
+      data: { averageRating: avgRating._avg.rating || 0 }
+    });
   }
 }
