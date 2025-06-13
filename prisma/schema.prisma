@@ -136,3 +136,17 @@ enum Preference {
   chat
   both
 }
+
+model RepostHistory {
+  id                 String   @id @default(uuid())
+  originalPropertyId String
+  repostedPropertyId String
+  userId             String
+  changeLog            Json
+  repostDate         DateTime @default(now())
+
+  // Relations
+  originalProperty   Property @relation("OriginalProperty", fields: [originalPropertyId], references: [id])
+  repostedProperty   Property @relation("RepostedProperty", fields: [repostedPropertyId], references: [id])
+  user               User     @relation(fields: [userId], references: [id])
+}
