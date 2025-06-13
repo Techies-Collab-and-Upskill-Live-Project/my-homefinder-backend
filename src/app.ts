@@ -38,8 +38,9 @@ class App {
     this.app.get("/", async (req, res) => {
       res.send("Welcome to My Homefinder");
     });
-    routes.forEach(({ router }) => {
-      this.app.use("/", router);
+    
+    routes.forEach(({ path, router }) => {
+      this.app.use(path, router);
     });
   };
 
@@ -65,6 +66,10 @@ class App {
       console.log(`Server listening on port ${this.port}`);
     });
   };
+
+  public getServer(){
+    return this.app;
+  }
 }
 
 export default App;
