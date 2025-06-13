@@ -1,13 +1,19 @@
+export enum StarRating {
+  ONE = 1,
+  TWO = 2,
+  THREE = 3,
+  FOUR = 4,
+  FIVE = 5
+}
+
 export interface CreateReviewInput {
   reviewerId: string;
-  userId?: string;
-  propertyId?: string;
-  rating: number;
+  propertyId: string;
+  rating: StarRating;
   comment: string;
 }
 
 export interface ReviewFilter {
-  userId?: string;
   propertyId?: string;
 }
 
