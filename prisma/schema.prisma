@@ -32,13 +32,15 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
+  reposts RepostHistory[]
+
   // Password reset tokens
   passwordResetTokens PasswordResetToken[]
   UserDocument        UserDocument[]
   properties          Property[]
 
   //landlord and tenant profile
-  tenants TenantProfile[]
+  tenants   TenantProfile[]
   landlords LandLordProfile[]
 }
 
@@ -89,6 +91,10 @@ model Property {
   updatedAt   DateTime     @updatedAt
   deleted     Boolean      @default(false)
 
+  //Repost relations
+  repostedFrom RepostHistory[] @relation("OriginalProperty")
+  repostedTo   RepostHistory[] @relation("RepostedProperty")
+
   // future support for messages, documents, bookings
   //messages      Message[]
 }
@@ -101,34 +107,32 @@ enum PropertyType {
   OFFICE
 }
 
-
-
 model TenantProfile {
-  id  Int @id @default(autoincrement())
+  id           Int    @id @default(autoincrement())
   profileImage String
-  fullName String
-  phoneNumber String @unique
-  street String
-  city String
-  state String
-  NIN String @unique
-  userId String
-  user User @relation(fields: [userId], references: [id])
+  fullName     String
+  phoneNumber  String @unique
+  street       String
+  city         String
+  state        String
+  NIN          String @unique
+  userId       String
+  user         User   @relation(fields: [userId], references: [id])
 }
 
 model LandLordProfile {
-  id Int @id @default(autoincrement())
-  profileImage String
-  typeOfHouse String
-  numberOfRooms String
-  otherInfo String
-  street String
-  preference Preference @default(calls)
-  NIN String @unique
-  driversLicense String @unique
-  BVN String @unique
-  userId String
-  user User @relation(fields: [userId], references: [id]) 
+  id             Int        @id @default(autoincrement())
+  profileImage   String
+  typeOfHouse    String
+  numberOfRooms  String
+  otherInfo      String
+  street         String
+  preference     Preference @default(calls)
+  NIN            String     @unique
+  driversLicense String     @unique
+  BVN            String     @unique
+  userId         String
+  user           User       @relation(fields: [userId], references: [id])
 }
 
 enum Preference {
@@ -142,11 +146,11 @@ model RepostHistory {
   originalPropertyId String
   repostedPropertyId String
   userId             String
-  changeLog            Json
+  changeLog          Json
   repostDate         DateTime @default(now())
 
   // Relations
-  originalProperty   Property @relation("OriginalProperty", fields: [originalPropertyId], references: [id])
-  repostedProperty   Property @relation("RepostedProperty", fields: [repostedPropertyId], references: [id])
-  user               User     @relation(fields: [userId], references: [id])
+  originalProperty Property @relation("OriginalProperty", fields: [originalPropertyId], references: [id])
+  repostedProperty Property @relation("RepostedProperty", fields: [repostedPropertyId], references: [id])
+  user             User     @relation(fields: [userId], references: [id])
 }
