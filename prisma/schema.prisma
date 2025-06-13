@@ -21,16 +21,18 @@ model Role {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  fullName   String
-  email      String   @unique
-  phone      String   @unique
-  password   String
-  isVerified Boolean  @default(false)
-  roleId     Int
-  role       Role     @relation(fields: [roleId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id              String   @id @default(uuid())
+  fullName        String
+  email           String   @unique
+  phone           String   @unique
+  password        String
+  isVerified      Boolean  @default(false)
+  roleId          Int
+  role            Role     @relation(fields: [roleId], references: [id])
+  reviewsGiven    Review[] @relation("Reviewer")
+  reviewsReceived Review[] @relation("ReviewedUser")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   reposts RepostHistory[]
 
@@ -97,6 +99,7 @@ model Property {
 
   // future support for messages, documents, bookings
   //messages      Message[]
+  reviews Review[]
 }
 
 enum PropertyType {
@@ -153,4 +156,17 @@ model RepostHistory {
   originalProperty Property @relation("OriginalProperty", fields: [originalPropertyId], references: [id])
   repostedProperty Property @relation("RepostedProperty", fields: [repostedPropertyId], references: [id])
   user             User     @relation(fields: [userId], references: [id])
+}
+
+model Review {
+  id         String    @id @default(uuid())
+  reviewerId String
+  reviewer   User      @relation("Reviewer", fields: [reviewerId], references: [id])
+  userId     String? // reviewed user (optional)
+  user       User?     @relation("ReviewedUser", fields: [userId], references: [id])
+  propertyId String? // reviewed property (optional)
+  property   Property? @relation(fields: [propertyId], references: [id])
+  rating     Int
+  comment    String
+  createdAt  DateTime  @default(now())
 }
