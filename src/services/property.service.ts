@@ -7,20 +7,25 @@ import { PropertyFilters, PropertyQueryOptions } from '../interfaces/property.in
 
 export class PropertyService {
 
+private prisma: typeof prisma;
+  constructor() {
+    this.prisma = prisma;
+  } 
+
   public createProperty = async (data: any) => {
-    const property = await prisma.property.create({ data });
+    const property = await this.prisma.property.create({ data });
     return property;
   };
 
   public getPropertyById = async (id: string) => {
-    const property = await prisma.property.findUnique({
+    const property = await this.prisma.property.findUnique({
       where: { id },
     });
     return property;
   };
 
   public updateProperty = async (id: string, userId: string, data: any) => {
-    const property = await prisma.property.findUnique({ where: { id } });
+    const property = await this.prisma.property.findUnique({ where: { id } });
     if (!property) {
       throw new HTTPException(StatusCodes.NOT_FOUND, "Property not found");
     }
@@ -35,7 +40,7 @@ export class PropertyService {
   };
 
   public softDeleteProperty = async (id: string, userId: string) => {
-    const property = await prisma.property.findUnique({ where: { id } });
+    const property = await this.prisma.property.findUnique({ where: { id } });
     if (!property) {
       throw new HTTPException(StatusCodes.NOT_FOUND, "Property not found");
     }
@@ -56,7 +61,7 @@ export class PropertyService {
 
     const geoLocation = await geocodeAddress(location);
     console.log(geoLocation);
-    const properties = await prisma.$queryRaw`
+    const properties = await this.prisma.$queryRaw`
       SELECT * FROM (
         SELECT *,
           (6371 * acos(
@@ -83,7 +88,7 @@ export class PropertyService {
     if (!lat || !lng || isNaN(Number(lat)) || isNaN(Number(lng))) {
       throw new HTTPException(StatusCodes.BAD_REQUEST, "Invalid coordinates");
     }
-    const properties = await prisma.$queryRaw`
+    const properties = await this.prisma.$queryRaw`
       SELECT * FROM (
         SELECT *,
           (6371 * acos(
@@ -171,12 +176,12 @@ export class PropertyService {
   
       try {
         // Get total count for pagination
-        const totalCount = await prisma.property.count({
+        const totalCount = await this.prisma.property.count({
           where: whereClause
         });
   
         // Get filtered properties
-        const properties = await prisma.property.findMany({
+        const properties = await this.prisma.property.findMany({
           where: whereClause,
           include: {
             landlord: {
@@ -218,7 +223,7 @@ export class PropertyService {
   
       } catch (error) {
         console.error('Error filtering properties:', error);
-        throw new Error('Failed to fetch filtered properties');
+        throw new HTTPException(StatusCodes.BAD_REQUEST,'Failed to fetch filtered properties');
       }
     }
   
@@ -248,7 +253,7 @@ export class PropertyService {
      */
     async getPropertyTypesWithCounts() {
       try {
-        const typeCounts = await prisma.property.groupBy({
+        const typeCounts = await this.prisma.property.groupBy({
           by: ['type'],
           where: {
             deleted: false,
@@ -259,13 +264,13 @@ export class PropertyService {
           }
         });
   
-        return typeCounts.map(item => ({
+        return typeCounts.map((item: any) => ({
           type: item.type,
           count: item._count.type
         }));
       } catch (error) {
         console.error('Error getting property type counts:', error);
-        throw new Error('Failed to fetch property type counts');
+        throw new HTTPException(StatusCodes.BAD_REQUEST, 'Failed to fetch property type counts');
       }
     }
   
@@ -274,7 +279,7 @@ export class PropertyService {
      */
     async getPriceStatistics() {
       try {
-        const stats = await prisma.property.aggregate({
+        const stats = await this.prisma.property.aggregate({
           where: {
             deleted: false,
             isAvailable: true
@@ -301,7 +306,7 @@ export class PropertyService {
         };
       } catch (error) {
         console.error('Error getting price statistics:', error);
-        throw new Error('Failed to fetch price statistics');
+        throw new HTTPException(StatusCodes.BAD_REQUEST,'Failed to fetch price statistics');
       }
     }
 }

@@ -22,7 +22,7 @@ export class AuthController {
       const user = await this.authService.signup(req.body);
       res
         .status(StatusCodes.CREATED)
-        .json({ data: user, message: "User registered" });
+        .json({ data: user, message: "User registered", user });
     } catch (error) {
       next(error);
     }
@@ -33,8 +33,8 @@ export class AuthController {
       const { token, cookie, user } = await this.authService.login(req.body);
       res.setHeader("Set-Cookie", [cookie]);
       res
-        .status(StatusCodes.CREATED)
-        .json({ data: { user, ...token }, message: "User logged in" });
+        .status(StatusCodes.OK)
+        .json({ message: "Login successful", token, user });
     } catch (error) {
       next(error);
     }

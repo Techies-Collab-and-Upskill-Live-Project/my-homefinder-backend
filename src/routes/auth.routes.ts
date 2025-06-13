@@ -22,19 +22,20 @@ export class AuthRoute implements Routes {
 
   private initializeRoutes() {
     this.router.post(
-      `${this.path}/forgot-password`,
+      "/forgot-password",
       forgotPasswordLimiter,
       validateForgotPassword,
-      asyncHandler(this.authController.forgotPassword),
+      this.authController.forgotPassword
     );
 
     this.router.post(
-      `${this.path}/reset-password`,
+      "/reset-password",
       resetPasswordLimiter,
       validateResetPassword,
-      asyncHandler(this.authController.resetPassword),
+      this.authController.resetPassword
     );
-    this.router.post(`${this.path}/login`, this.authController.login);
-    this.router.post(`${this.path}/signup`, this.authController.signup);
+
+    this.router.post("/signup", this.authController.signup);
+    this.router.post("/login", this.authController.login);
   }
 }
