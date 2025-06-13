@@ -29,8 +29,7 @@ model User {
   isVerified      Boolean  @default(false)
   roleId          Int
   role            Role     @relation(fields: [roleId], references: [id])
-  reviewsGiven    Review[] @relation("Reviewer")
-  reviewsReceived Review[] @relation("ReviewedUser")
+  reviewsGiven Review[] @relation("Reviewer")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -158,15 +157,23 @@ model RepostHistory {
   user             User     @relation(fields: [userId], references: [id])
 }
 
+enum StarRating {
+  ONE    @map("1")
+  TWO    @map("2")
+  THREE  @map("3")
+  FOUR   @map("4")
+  FIVE   @map("5")
+}
+
 model Review {
-  id         String    @id @default(uuid())
-  reviewerId String
-  reviewer   User      @relation("Reviewer", fields: [reviewerId], references: [id])
-  userId     String? // reviewed user (optional)
-  user       User?     @relation("ReviewedUser", fields: [userId], references: [id])
-  propertyId String? // reviewed property (optional)
-  property   Property? @relation(fields: [propertyId], references: [id])
-  rating     Int
-  comment    String
-  createdAt  DateTime  @default(now())
+  id          String     @id @default(uuid())
+  reviewerId  String
+  propertyId  String   
+  rating      StarRating
+  comment     String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  reviewer    User       @relation("Reviewer", fields: [reviewerId], references: [id])
+  property    Property   @relation(fields: [propertyId], references: [id])
 }
