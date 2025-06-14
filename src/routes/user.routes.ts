@@ -5,7 +5,9 @@ import { Router } from "express";
 import { Routes } from "../interfaces/route.interface";
 import tenantAccess from "../middlewares/tenantAccess.middleware";
 import landLordAccess from "../middlewares/landLordAccess.middleware";
+
 class UserRoutes implements Routes {
+  public path ="/api/v1/users"
   public router = Router();
 
   constructor() {
