@@ -5,7 +5,7 @@ class getProfile {
     constructor() {
         this.prisma = prisma
     }
-   public async getTenantProfie(userID:string){
+   public async getTenantProfile(userID:string){
         // check if user exists
         const checkUser = await prisma.user.findUnique({
             where: {id: userID}
@@ -21,7 +21,7 @@ class getProfile {
         return tenantProfile
     }
 
-    public async getLandlordProfie(userID:string){
+    public async getLandlordProfile(userID:string){
         // check if user exists
         const checkUser = await prisma.user.findUnique({
             where: {id: userID}

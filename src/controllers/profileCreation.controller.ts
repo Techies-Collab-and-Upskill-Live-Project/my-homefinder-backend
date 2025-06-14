@@ -2,9 +2,10 @@ import { Request,Response } from "express"
 import userProfilesCreation from "../services/userProfileCreation.service"
 import updateProfile from "../services/updateProfile.service"
 import getProfileInstance from "../services/getProfile.service"
+import { RequestWithUser } from "../interfaces/auth.interface"
 const profileCreation = new userProfilesCreation
 class usercontroller{
-    public createProfile = async (req:Request,res:Response) => {
+    public createProfile = async (req:RequestWithUser,res:Response) => {
        try {
          const user = req.query.user
         const image = req.file?.path
@@ -42,12 +43,11 @@ class usercontroller{
 
     }
 
-    public updateProfile = async (req:Request,res:Response) => {
+    public updateProfile = async (req:RequestWithUser,res:Response) => {
         const body = req.body
         const image = req.file?.path
         const userID = req.params.userId
         const user = req.query.user
-        console.log(user)
 
         if(user == "tenant"){
             try {
@@ -92,12 +92,12 @@ class usercontroller{
         }
     }
 
-    public getProfile = async (req:Request,res:Response) => {
+    public getProfile = async (req:RequestWithUser,res:Response) => {
         const userId = req.params.userId
-        const user = req.user
+        const user = req.user.role
         if(user == 'Tenant'){
             try {
-                const tenantProfile = await getProfileInstance.getTenantProfie(userId)
+                const tenantProfile = await getProfileInstance.getTenantProfile(userId)
                 res.status(200).json({
                     success:true,
                     message:"tenant profile gotten successfully",
@@ -117,7 +117,7 @@ class usercontroller{
 
         if(user == 'Landlord'){
             try {
-                const landlordProfile = await getProfileInstance.getLandlordProfie(userId)
+                const landlordProfile = await getProfileInstance.getLandlordProfile(userId)
                 res.status(200).json({
                     success:true,
                     message:"landlord profile gotten successfully",

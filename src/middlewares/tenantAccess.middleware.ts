@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { PrismaClient } from "../../generated/prisma";
+import { RequestWithUser } from "../interfaces/auth.interface";
 const prisma = new PrismaClient()
 interface Error {
     message:string
 }
 
-const tenantAccess = async (req:Request,res:Response,next:NextFunction) => {
+const tenantAccess = async (req:RequestWithUser,res:Response,next:NextFunction) => {
     try {
         //query database for role info;
     const userId = req.params.userId
@@ -28,9 +29,9 @@ const tenantAccess = async (req:Request,res:Response,next:NextFunction) => {
     if(role != 'tenant'){
         throw new Error("unauthorized access")
     }
-    req.user = role
+    req.user.role = role
     } catch (error:any) {
-        res.status(404).json({
+        res.status(401).json({
             success:false,
             message:'an error occured',
             data:error.message
