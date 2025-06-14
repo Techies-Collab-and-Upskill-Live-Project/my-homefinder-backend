@@ -21,16 +21,18 @@ model Role {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  fullName   String
-  email      String   @unique
-  phone      String   @unique
-  password   String
-  isVerified Boolean  @default(false)
-  roleId     Int
-  role       Role     @relation(fields: [roleId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id              String   @id @default(uuid())
+  fullName        String
+  email           String   @unique
+  phone           String   @unique
+  password        String
+  isVerified      Boolean  @default(false)
+  roleId          Int
+  role            Role     @relation(fields: [roleId], references: [id])
+  reviewsGiven Review[] @relation("Reviewer")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
 
   // Password reset tokens
   passwordResetTokens PasswordResetToken[]
@@ -93,6 +95,7 @@ model Property {
   deleted     Boolean      @default(false)
 
   // future support for messages, documents, bookings
+  reviews Review[]
 
   messages Message[] @relation("PropertyMessages")
 }
@@ -149,4 +152,25 @@ enum Preference {
   calls
   chat
   both
+}
+
+enum StarRating {
+  ONE    @map("1")
+  TWO    @map("2")
+  THREE  @map("3")
+  FOUR   @map("4")
+  FIVE   @map("5")
+}
+
+model Review {
+  id          String     @id @default(uuid())
+  reviewerId  String
+  propertyId  String   
+  rating      StarRating
+  comment     String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  reviewer    User       @relation("Reviewer", fields: [reviewerId], references: [id])
+  property    Property   @relation(fields: [propertyId], references: [id])
 }
