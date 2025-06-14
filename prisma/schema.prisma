@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  //output = "node_modules/@prisma/client"
+  output   = "node_modules/@prisma/client"
 }
 
 datasource db {
@@ -38,7 +38,7 @@ model User {
   properties          Property[]
 
   //landlord and tenant profile
-  tenants TenantProfile[]
+  tenants   TenantProfile[]
   landlords LandLordProfile[]
 
   sentMessages     Message[] @relation("SentMessages")
@@ -94,7 +94,7 @@ model Property {
 
   // future support for messages, documents, bookings
 
- messages      Message[]  @relation("PropertyMessages")
+  messages Message[] @relation("PropertyMessages")
 }
 
 enum PropertyType {
@@ -105,46 +105,44 @@ enum PropertyType {
   OFFICE
 }
 
-
-
 model TenantProfile {
-  id  Int @id @default(autoincrement())
+  id           Int    @id @default(autoincrement())
   profileImage String
-  fullName String
-  phoneNumber String @unique
-  street String
-  city String
-  state String
-  NIN String @unique
-  userId String
-  user User @relation(fields: [userId], references: [id])
+  fullName     String
+  phoneNumber  String @unique
+  street       String
+  city         String
+  state        String
+  NIN          String @unique
+  userId       String
+  user         User   @relation(fields: [userId], references: [id])
 }
 
 model LandLordProfile {
-  id Int @id @default(autoincrement())
-  profileImage String
-  typeOfHouse String
-  numberOfRooms String
-  otherInfo String
-  street String
-  preference Preference @default(calls)
-  NIN String @unique
-  driversLicense String @unique
-  BVN String @unique
-  userId String
-  user User @relation(fields: [userId], references: [id]) 
+  id             Int        @id @default(autoincrement())
+  profileImage   String
+  typeOfHouse    String
+  numberOfRooms  String
+  otherInfo      String
+  street         String
+  preference     Preference @default(calls)
+  NIN            String     @unique
+  driversLicense String     @unique
+  BVN            String     @unique
+  userId         String
+  user           User       @relation(fields: [userId], references: [id])
 }
 
 model Message {
-  id          String   @id @default(uuid())
-  senderId    String
-  receiverId  String
-  content     String
-  propertyId  String?
-  createdAt   DateTime @default(now())
-  sender    User    @relation("SentMessages", fields: [senderId], references: [id])
-  receiver  User    @relation("ReceivedMessages", fields: [receiverId], references: [id])
-  property  Property? @relation("PropertyMessages",fields: [propertyId], references: [id])
+  id         String    @id @default(uuid())
+  senderId   String
+  receiverId String
+  content    String
+  propertyId String?
+  createdAt  DateTime  @default(now())
+  sender     User      @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User      @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  property   Property? @relation("PropertyMessages", fields: [propertyId], references: [id])
 }
 
 enum Preference {
