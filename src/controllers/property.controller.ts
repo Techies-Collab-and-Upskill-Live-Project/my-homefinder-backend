@@ -3,7 +3,7 @@ import {RequestWithUser} from "../interfaces/auth.interface";
 import {PropertyService} from "../services/property.service";
 import {StatusCodes} from "http-status-codes";
 import {PropertyType} from '@prisma/client';
-import {PropertyFilters, PropertyQueryOptions} from '../interfaces/property.interface';
+import {createPropertyData, PropertyFilters, PropertyQueryOptions} from '../interfaces/property.interface';
 
 export class PropertyController {
     private propertyService: PropertyService;
@@ -19,7 +19,8 @@ export class PropertyController {
     ): Promise<void> => {
         try {
             const landlordId = req.user.id;
-            const property = await this.propertyService.createProperty({...req.body, landlordId});
+            const createPropertyData: createPropertyData = req.body;
+            const property = await this.propertyService.createProperty(createPropertyData, landlordId);
             res.status(StatusCodes.CREATED).json({message: "Property created", property});
         } catch (error) {
             next(error);
@@ -34,9 +35,9 @@ export class PropertyController {
         try {
             const {id} = req.params;
             const property = await this.propertyService.getPropertyById(id);
+            console.log("I am the one working");
             if (!property || property.deleted) {
                 res.status(StatusCodes.NOT_FOUND).json({message: "Property not found"});
-                return;
             }
             res.status(StatusCodes.OK).json({property});
         } catch (error) {
@@ -74,7 +75,7 @@ export class PropertyController {
         }
     };
 
-    public getPropertiesInLocation = async (
+    public getPropertiesAtLocation = async (
         req: RequestWithUser,
         res: Response,
         next: NextFunction,

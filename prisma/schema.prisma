@@ -75,7 +75,7 @@ enum VerificationStatus {
 }
 
 model Property {
-  id          String       @id @default(uuid())
+  id          String          @id @default(uuid())
   title       String
   description String
   price       Float
@@ -86,17 +86,27 @@ model Property {
   country     String
   latitude    Float?
   longitude   Float?
-  isAvailable Boolean      @default(true)
+  isAvailable Boolean         @default(true)
   landlordId  String
-  landlord    User         @relation(fields: [landlordId], references: [id])
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  deleted     Boolean      @default(false)
+  landlord    User            @relation(fields: [landlordId], references: [id], onDelete: Cascade)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  deleted     Boolean         @default(false)
+  images      PropertyImage[]
 
   // future support for messages, documents, bookings
   reviews Review[]
 
   messages Message[] @relation("PropertyMessages")
+}
+
+model PropertyImage {
+  id         String   @id @default(uuid())
+  propertyId String
+  url        String
+  createdAt  DateTime @default(now())
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 }
 
 enum PropertyType {

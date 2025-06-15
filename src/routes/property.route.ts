@@ -9,7 +9,7 @@ import asyncHandler from "express-async-handler";
 
 export class PropertyRoute implements Routes {
     public path = "/api/v1/property";
-    public router = Router();
+    public router: Router = Router();
     private propertyController = new PropertyController();
 
     constructor() {
@@ -47,13 +47,13 @@ export class PropertyRoute implements Routes {
 
         // get all properties in a location
         this.router.get(
-            `${this.path}/location`,
+            `${this.path}location`,
             authMiddleware,
-            asyncHandler(this.propertyController.getPropertiesInLocation as RequestHandler)
+            asyncHandler(this.propertyController.getPropertiesAtLocation as RequestHandler)
         );
 
         this.router.get(
-            `${this.path}/nearby`,
+            `${this.path}location/nearby`,
             authMiddleware,
             asyncHandler(this.propertyController.getPropertyNearBy as RequestHandler)
         );
@@ -62,15 +62,14 @@ export class PropertyRoute implements Routes {
         // GET /api/properties?type=HOUSE&minPrice=1000&maxPrice=5000&city=Nairobi&page=1&limit=10&sortBy=price&sortOrder=asc
         this.router.get(
             `${this.path}`,
-
             authMiddleware,
             PropertyValidationMiddleware.validatePropertyFilters,
             asyncHandler(this.propertyController.getProperties as RequestHandler)
         )
 
         // Get properties by category/type with validation
-        // GET /api/properties/category/HOUSE
-        // GET /api/properties/category/APARTMENT
+        // GET /api/property/category/HOUSE
+        // GET /api/v1/property/category/APARTMENT
         this.router.get(
             `${this.path}/category/:type`,
             authMiddleware,
