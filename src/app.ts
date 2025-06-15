@@ -8,6 +8,8 @@ import errorMiddleware from "./middlewares/error.middleware";
 import { notFoundError } from "./middlewares/notfound.middleware";
 import { Routes } from "./interfaces/route.interface";
 import { PrismaClient } from "@prisma/client";
+import swaggerUi from  "swagger-ui-express";
+import YAML from "yamljs";
 
 class App {
   public port: number;
@@ -32,6 +34,7 @@ class App {
     this.app.use(cors({ origin: CREDENTIALS, credentials: true }));
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
+    this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(YAML.load("./src/docs/swagger.yaml")));
   };
 
   private initializeRoutes = (routes: Routes[]) => {
