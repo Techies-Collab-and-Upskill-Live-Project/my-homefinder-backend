@@ -78,26 +78,26 @@ export class PropertyRoute implements Routes {
         )
 
         // Get properties by budget range with validation
-        // GET /api/properties/budget?minPrice=1000&maxPrice=5000
+        // GET /api/v1/property/filter/budget?minPrice=1000&maxPrice=5000
         this.router.get(
-            `${this.path}/budget`,
+            `${this.path}/filter/budget`,
             authMiddleware,
             PropertyValidationMiddleware.validateBudgetParams,
             asyncHandler(this.propertyController.getPropertiesByBudget as RequestHandler)
         )
 
         // Get available property types with counts
-        // GET /api/properties/types
+        // GET /api/v1/property/filter/types
         this.router.get(
-            `${this.path}/types`,
+            `${this.path}/filter/types`,
             authMiddleware,
             asyncHandler(this.propertyController.getPropertyTypes as RequestHandler)
         )
 
         // Get price statistics
-        // GET /api/properties/price-stats
+        // GET ``/api/v1/property/filter/price-stats``
         this.router.get(
-            `${this.path}/price-stats`,
+            `${this.path}/filter/price-stats`,
             authMiddleware,
             asyncHandler(this.propertyController.getPriceStatistics as RequestHandler)
         )

@@ -131,7 +131,8 @@ private prisma: typeof prisma;
         totalPages,
         limit,
         hasNext,
-        hasPrev
+        hasPrev,
+        totalCount
       }
     };
   };
@@ -188,7 +189,8 @@ private prisma: typeof prisma;
         totalPages,
         limit,
         hasNext,
-        hasPrev
+        hasPrev,
+        totalCount
       }
     };
   };

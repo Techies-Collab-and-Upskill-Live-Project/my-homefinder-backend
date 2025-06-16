@@ -81,11 +81,16 @@ export class PropertyController {
         next: NextFunction,
     ): Promise<void> => {
         try {
-            const {location, radius} = req.query;
+            const {location, radius, page, limit} = req.query;
             const searchRadius = radius ? parseFloat(radius as string) : 10;
+            const pageNum = page ? parseInt(page as string) : 1;
+            const limitNum = limit ? parseInt(limit as string) : 10;
+
             const properties = await this.propertyService.getPropertiesInLocation(
                 location as string,
                 searchRadius,
+                pageNum,
+                limitNum
             );
             res.status(StatusCodes.OK).json({data: properties});
         } catch (error) {
@@ -99,13 +104,18 @@ export class PropertyController {
         next: NextFunction,
     ): Promise<void> => {
         try {
+            const {page, limit} = req.query;
             const lat = parseFloat(req.query.lat as string);
             const lng = parseFloat(req.query.lng as string);
             const radius = parseFloat(req.query.radius as string) || 10;
+            const pageNum = page ? parseInt(page as string) : 1;
+            const limitNum = limit ? parseInt(limit as string) : 10;
             const properties = await this.propertyService.getPropertyNearBy(
                 lat,
                 lng,
                 radius,
+                pageNum,
+                limitNum
             );
             res.status(StatusCodes.OK).json({data: properties});
         } catch (error) {
@@ -113,10 +123,7 @@ export class PropertyController {
         }
     };
 
-    /**
-     * Get all properties with optional filters
-     * GET /api/properties?type=HOUSE&minPrice=1000&maxPrice=5000&city=Nairobi&page=1&limit=10
-     */
+
     public getProperties = async (
         req: Request,
         res: Response,
@@ -194,10 +201,7 @@ export class PropertyController {
         }
     };
 
-    /**
-     * Get properties by category/type
-     * GET /api/properties/category/:type
-     */
+
     public getPropertiesByCategory = async (
         req: Request,
         res: Response,
@@ -229,10 +233,7 @@ export class PropertyController {
         }
     };
 
-    /**
-     * Get properties by budget range
-     * GET /api/properties/budget?minPrice=1000&maxPrice=5000
-     */
+
     public getPropertiesByBudget = async (
         req: Request,
         res: Response,
@@ -270,10 +271,7 @@ export class PropertyController {
         }
     };
 
-    /**
-     * Get property types with counts
-     * GET /api/properties/types
-     */
+
     public getPropertyTypes = async (
         req: Request,
         res: Response,
@@ -292,10 +290,7 @@ export class PropertyController {
         }
     };
 
-    /**
-     * Get price statistics
-     * GET /api/properties/price-stats
-     */
+
     public getPriceStatistics = async (
         req: Request,
         res: Response,

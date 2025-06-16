@@ -278,26 +278,49 @@ paths:
                     type: string
                     example: "Too many password reset attempts. Please try again later."
 
-  /properties:
-    get:
-      summary: Get all properties
+  /property/create-property:
+    post:
+      summary: Create a new property
+      security:
+        - BearerAuth: [ ]
       tags:
-        - Properties
+        - Property
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProperty'
       responses:
         '200':
-          description: List of properties
+          description: Property created successfully
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Property'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Properties retrieved successfully"
+                  property:
+                    $ref: '#/components/schemas/Property'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized"
 
-  /properties/{id}:
+  /property/{:id}:
     get:
       summary: Get property by ID
+      security:
+        - BearerAuth: [ ]
       tags:
-        - Properties
+        - Property
       parameters:
         - in: path
           name: id
@@ -311,9 +334,368 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Property'
+                type: object
+                properties:
+                  property:
+                    $ref: '#/components/schemas/Property'
         '404':
           description: Property not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Property Not Found"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized"
+
+    patch:
+      summary: Update Property by ID
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Property
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the property
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [ "APARTMENT", "HOUSE", "FLAT", "TOWNHOUSE" ]
+                  example: "APARTMENT"
+                price:
+                  type: number
+                  format: float
+                  example: 10000.00
+                isAvaliable:
+                  type: boolean
+                  example: false
+      responses:
+        '201':
+          description: A single property
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  property:
+                    $ref: '#/components/schemas/Property'
+        '404':
+          description: Property not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Property Not Found"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized"
+
+    delete:
+      summary: Delete Property By ID
+      tags:
+        - Property
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the property
+      responses:
+        '201':
+          description: A single property
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Property Soft-deleted"
+        '404':
+          description: Property not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Property Not Found"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized"
+
+  /propertylocation/location:
+    get:
+      summary: Get Properties at a Given Address or Location
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Property
+      parameters:
+        - in: query
+          name: location
+          schema:
+            type: string
+          required: true
+          description: Property Search Location
+        - in: query
+          name: radius
+          schema: 
+            type: number
+          required: false
+          description: Search Radius
+        - in: query
+          name: limit
+          schema: 
+            type: number
+          required: false
+          description: Limit Number of results per Page
+        - in: query
+          name: page
+          schema: 
+            type: number
+          required: false
+          description: Page Number
+      responses:
+        200:
+          description: List of Properties in the query parameter
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/PropertyFilterResult'
+
+  /propertylocation/nearby:
+    get:
+      summary: Get Properties nearby Current Location
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Property
+      parameters:
+        - in: query
+          name: lat
+          schema:
+            type: number
+            format: float
+          required: true
+          description: Latitude Coordinate
+        - in: query
+          name: lng
+          schema:
+            type: number
+            format: float
+          required: true
+          description: Longitude Coordinate
+        - in: query
+          name: radius
+          schema:
+            type: number
+          required: false
+          description: Search Radius
+        - in: query
+          name: limit
+          schema:
+            type: number
+          required: false
+          description: Limit Number of results per Page
+        - in: query
+          name: page
+          schema:
+            type: number
+          required: false
+          description: Page Number
+      responses:
+        200:
+          description: List of Properties in the query parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyFilterResult'
+
+  /property/filter/budget:
+    get:
+      summary: Get Properties Based on Budget
+      security:
+        - BearerAuth: []
+      tags:
+        - Property
+      parameters:
+        - in: query
+          name: minPrice
+          schema: 
+            type: number
+          required: true
+          description: Minimum Price 
+        - in: query
+          name: maxPrice
+          schema:
+            type: number
+          required: true
+          description: Maximum Price 
+      responses: 
+        200:
+          description: Get Properties Based on Budget
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Properties within budget retrieved successfully"
+                  data:
+                    $ref: '#/components/schemas/PropertyBudgetResult'
+
+  /property/category/{:type}:
+    get:
+      summary: Get Properties Based on Type
+      security:
+        - BearerAuth: []
+      tags:
+        - Property
+      parameters:
+        - in: path
+          name: type
+          schema:
+            type: string
+            enum: [ "APARTMENT", "HOUSE", "FLAT", "TOWNHOUSE" ]
+          required: true
+          description: Property Category
+      responses:
+        200:
+          description: Get Properties Based on Type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "APARTMENT properties retrieved successfully"
+                  data:
+                    $ref: '#/components/schemas/PropertyTypeResult'
+
+  /property/filter/types:
+    get:
+      summary: Get Property Count based on types 
+      security:
+        - BearerAuth: []
+      tags:
+        - Property
+      responses: 
+        200:
+          description: Get List of Property type counts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Property types retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum:  [ "APARTMENT", "HOUSE", "FLAT", "TOWNHOUSE" ]
+                          example: "APARTMENT"
+                        count:
+                          type: number
+                          example: 10
+
+  /property/filter/price-stats:
+    get:
+      summary: Get Property Price Stats 
+      security:
+        - BearerAuth: []
+      tags:
+        - Property
+      responses:
+        200:
+          description: Get Available Price Stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Price statistics retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        minPrice:
+                          type: number
+                          format: float
+                          example: 1000
+                        maxPrice:
+                          type: number
+                          example: 1200
+                        avgPrice:
+                          type: number
+                          format: float
+                          example: 1100
+                        totalProperties:
+                          type: number
+                          example: 10
 
 components:
   schemas:
@@ -322,18 +704,74 @@ components:
       properties:
         id:
           type: string
-        name:
+          format: uuid
+          example: "4ff8f06e-5afa-4614-9c6e-7785c4f1bc37"
+        title:
           type: string
+          example: "Modern 2 Bedroom Apartment"
+        description:
+          type: string
+          example: "A spacious and modern apartment located in a serene neighborhood."
         price:
           type: number
+          format: float
+          example: 1200
+        type:
+          type: string
+          enum: [ APARTMENT, HOUSE, FLAT, TOWNHOUSE ]
+          example: "APARTMENT"
+        address:
+          type: string
+          example: "12 Bourdillon Rd, Ikoyi, Lagos 106104, Lagos, Nigeria"
         city:
           type: string
+          example: "Lagos"
         state:
           type: string
+          example: "Lagos"
         country:
           type: string
+          example: "Nigeria"
+        latitude:
+          type: number
+          format: float
+          example: 6.4463214
+        longitude:
+          type: number
+          format: float
+          example: 3.436279
         isAvailable:
           type: boolean
+          example: true
+        landlordId:
+          type: string
+          format: uuid
+          example: "ddcc4597-599b-4fbf-a19f-59a3903e2843"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-06-15T15:51:20.795Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-06-15T15:51:20.795Z"
+        deleted:
+          type: boolean
+          example: false
+      required:
+        - id
+        - title
+        - price
+        - type
+        - address
+        - city
+        - state
+        - country
+        - isAvailable
+        - landlordId
+        - createdAt
+        - updatedAt
+
     User:
       type: object
       properties:
@@ -416,3 +854,144 @@ components:
         location:
           type: string
           example: "body"
+
+    CreateProperty:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Modern 2 Bedroom Apartment"
+        description:
+          type: string
+          example: "A spacious and modern apartment located in a serene neighborhood."
+        price:
+          type: number
+          format: float
+          example: 1200
+        type:
+          type: string
+          enum: [ "APARTMENT", "HOUSE", "FLAT", "TOWNHOUSE" ]
+          example: "APARTMENT"
+        address:
+          type: string
+          example: "12 Bourdillon Rd, Ikoyi"
+        city:
+          type: string
+          example: "Lagos"
+        state:
+          type: string
+          example: "Lagos"
+        country:
+          type: string
+          example: "Nigeria"
+        latitude:
+          type: number
+          format: float
+          example: 6.4463214
+        longitude:
+          type: number
+          format: float
+          example: 3.436279
+      required:
+        - title
+        - description
+        - price
+        - type
+        - address
+        - city
+        - state
+        - country
+        - latitude
+        - longitude
+
+    Pagination:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          example: 1
+        totalPage:
+          type: number
+          example: 5
+        limit:
+          type: number
+          example: 10
+        hasNext:
+          type: boolean
+          example: true
+        hasPrev:
+          type: boolean
+          example: false
+        totalCount:
+          type: number
+          example: 50
+
+    TypeFilter:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:  [ "APARTMENT", "HOUSE", "FLAT", "TOWNHOUSE" ]
+          example: "APARTMENT"
+        isAvailable:
+          type: boolean
+          example: true
+
+    BudgetFilter:
+      type: object
+      properties:
+        minPrice:
+          type: number
+          format: float
+          example: 1000
+        maxPrice:
+          type: number
+          format: float
+          example: 5000
+        isAvailable:
+          type: boolean
+          example: true
+
+    PropertyTypeResult:
+      type: object
+      properties:
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/Property'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        filter:
+          $ref: '#/components/schemas/TypeFilter'
+
+    PropertyBudgetResult:
+      type: object
+      properties:
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/Property'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        filter:
+          $ref: '#/components/schemas/BudgetFilter'
+
+    PropertyFilterResult:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            properties:
+              type: array
+              items:
+                $ref: '#/components/schemas/Property'
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "JWT token for authentication"
