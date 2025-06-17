@@ -1,0 +1,997 @@
+openapi: 3.0.0
+info:
+  title: HomeFinder API
+  version: 1.0.0
+  description: API documentation for HomeFinder, a rental and landlord app and management system.
+
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local development server
+  - url: https://api.homefinder.com/v1
+    description: Production server
+
+paths:
+  /auth/signup:
+    post:
+      summary: User registration
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullName:
+                  type: string
+                  example: "Homefinder landlord"
+                email:
+                  type: string
+                  format: email
+                  example: "homefinderlandlord@gmail.com"
+                phone:
+                  type: string
+                  example: "08055554343"
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+                passwordRepeat:
+                  type: string
+                  format: password
+                  example: "password123"
+                role:
+                  type: string
+                  enum: [ "renter", "landlord" ]
+                  example: "landlord"
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User registered successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example:
+                      invalidRole:
+                        value: "Invalid or missing role. Role must be renter or landlord"
+                      passwordMismatch:
+                        value: "Password and passwordRepeat do not match"
+                      ExistingUser:
+                        value: "Email already registered. Please login instead"
+
+  /auth/login:
+    post:
+      summary: User login
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emailOrPhone:
+                  type: string
+                  format: email
+                  example: "admin@gmail.com"
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Login successful"
+                  token:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                      expiresIn:
+                        type: string
+                        example: "2025-06-01T13:32:52.016Z"
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid Credentials"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User Not Found"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Empty Login Data"
+
+  /auth/forgot-password:
+    post:
+      summary: Forgot password
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emailOrPhone:
+                  type: string
+                  format: email
+                  example: "adminHome@gmail.com"
+      responses:
+        '200':
+          description: Password reset link sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: "true"
+                  message:
+                    type: string
+                    example: "Password reset code sent to your email address."
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: "false"
+                  message:
+                    type: string
+                    example: "Validation Failed"
+                  data:
+                    type: object
+                    properties:
+                      errors:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ValidationError'
+
+        '429':
+          description: Too many Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: "false"
+                  message:
+                    type: string
+                    example: "Too many password reset attempts. Please try again later."
+
+  /auth/reset-password:
+    post:
+      summary: Forgot password
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emailOrPhone:
+                  type: string
+                  format: email
+                  example: "adminHome@gmail.com"
+      responses:
+        '200':
+          description: Password reset link sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: "true"
+                  message:
+                    type: string
+                    example: "Password reset successfully."
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: "false"
+                  message:
+                    type: string
+                    example: "Validation Failed"
+                  data:
+                    type: object
+                    properties:
+                      errors:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/StrongPasswordError'
+
+        '429':
+          description: Too many Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                    example: "false"
+                  message:
+                    type: string
+                    example: "Too many password reset attempts. Please try again later."
+
+  /property/create-property:
+    post:
+      summary: Create a new property
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Property
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProperty'
+      responses:
+        '200':
+          description: Property created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Properties retrieved successfully"
+                  property:
+                    $ref: '#/components/schemas/Property'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized"
+
+  /property/{:id}:
+    get:
+      summary: Get property by ID
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Property
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the property
+      responses:
+        '200':
+          description: A single property
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  property:
+                    $ref: '#/components/schemas/Property'
+        '404':
+          description: Property not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Property Not Found"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized"
+
+    patch:
+      summary: Update Property by ID
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Property
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the property
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [ "APARTMENT", "HOUSE", "FLAT", "TOWNHOUSE" ]
+                  example: "APARTMENT"
+                price:
+                  type: number
+                  format: float
+                  example: 10000.00
+                isAvaliable:
+                  type: boolean
+                  example: false
+      responses:
+        '201':
+          description: A single property
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  property:
+                    $ref: '#/components/schemas/Property'
+        '404':
+          description: Property not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Property Not Found"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized"
+
+    delete:
+      summary: Delete Property By ID
+      tags:
+        - Property
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the property
+      responses:
+        '201':
+          description: A single property
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Property Soft-deleted"
+        '404':
+          description: Property not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Property Not Found"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthorized"
+
+  /propertylocation/location:
+    get:
+      summary: Get Properties at a Given Address or Location
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Property
+      parameters:
+        - in: query
+          name: location
+          schema:
+            type: string
+          required: true
+          description: Property Search Location
+        - in: query
+          name: radius
+          schema: 
+            type: number
+          required: false
+          description: Search Radius
+        - in: query
+          name: limit
+          schema: 
+            type: number
+          required: false
+          description: Limit Number of results per Page
+        - in: query
+          name: page
+          schema: 
+            type: number
+          required: false
+          description: Page Number
+      responses:
+        200:
+          description: List of Properties in the query parameter
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/PropertyFilterResult'
+
+  /propertylocation/nearby:
+    get:
+      summary: Get Properties nearby Current Location
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Property
+      parameters:
+        - in: query
+          name: lat
+          schema:
+            type: number
+            format: float
+          required: true
+          description: Latitude Coordinate
+        - in: query
+          name: lng
+          schema:
+            type: number
+            format: float
+          required: true
+          description: Longitude Coordinate
+        - in: query
+          name: radius
+          schema:
+            type: number
+          required: false
+          description: Search Radius
+        - in: query
+          name: limit
+          schema:
+            type: number
+          required: false
+          description: Limit Number of results per Page
+        - in: query
+          name: page
+          schema:
+            type: number
+          required: false
+          description: Page Number
+      responses:
+        200:
+          description: List of Properties in the query parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyFilterResult'
+
+  /property/filter/budget:
+    get:
+      summary: Get Properties Based on Budget
+      security:
+        - BearerAuth: []
+      tags:
+        - Property
+      parameters:
+        - in: query
+          name: minPrice
+          schema: 
+            type: number
+          required: true
+          description: Minimum Price 
+        - in: query
+          name: maxPrice
+          schema:
+            type: number
+          required: true
+          description: Maximum Price 
+      responses: 
+        200:
+          description: Get Properties Based on Budget
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Properties within budget retrieved successfully"
+                  data:
+                    $ref: '#/components/schemas/PropertyBudgetResult'
+
+  /property/category/{:type}:
+    get:
+      summary: Get Properties Based on Type
+      security:
+        - BearerAuth: []
+      tags:
+        - Property
+      parameters:
+        - in: path
+          name: type
+          schema:
+            type: string
+            enum: [ "APARTMENT", "HOUSE", "FLAT", "TOWNHOUSE" ]
+          required: true
+          description: Property Category
+      responses:
+        200:
+          description: Get Properties Based on Type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "APARTMENT properties retrieved successfully"
+                  data:
+                    $ref: '#/components/schemas/PropertyTypeResult'
+
+  /property/filter/types:
+    get:
+      summary: Get Property Count based on types 
+      security:
+        - BearerAuth: []
+      tags:
+        - Property
+      responses: 
+        200:
+          description: Get List of Property type counts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Property types retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum:  [ "APARTMENT", "HOUSE", "FLAT", "TOWNHOUSE" ]
+                          example: "APARTMENT"
+                        count:
+                          type: number
+                          example: 10
+
+  /property/filter/price-stats:
+    get:
+      summary: Get Property Price Stats 
+      security:
+        - BearerAuth: []
+      tags:
+        - Property
+      responses:
+        200:
+          description: Get Available Price Stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Price statistics retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        minPrice:
+                          type: number
+                          format: float
+                          example: 1000
+                        maxPrice:
+                          type: number
+                          example: 1200
+                        avgPrice:
+                          type: number
+                          format: float
+                          example: 1100
+                        totalProperties:
+                          type: number
+                          example: 10
+
+components:
+  schemas:
+    Property:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "4ff8f06e-5afa-4614-9c6e-7785c4f1bc37"
+        title:
+          type: string
+          example: "Modern 2 Bedroom Apartment"
+        description:
+          type: string
+          example: "A spacious and modern apartment located in a serene neighborhood."
+        price:
+          type: number
+          format: float
+          example: 1200
+        type:
+          type: string
+          enum: [ APARTMENT, HOUSE, FLAT, TOWNHOUSE ]
+          example: "APARTMENT"
+        address:
+          type: string
+          example: "12 Bourdillon Rd, Ikoyi, Lagos 106104, Lagos, Nigeria"
+        city:
+          type: string
+          example: "Lagos"
+        state:
+          type: string
+          example: "Lagos"
+        country:
+          type: string
+          example: "Nigeria"
+        latitude:
+          type: number
+          format: float
+          example: 6.4463214
+        longitude:
+          type: number
+          format: float
+          example: 3.436279
+        isAvailable:
+          type: boolean
+          example: true
+        landlordId:
+          type: string
+          format: uuid
+          example: "ddcc4597-599b-4fbf-a19f-59a3903e2843"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-06-15T15:51:20.795Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-06-15T15:51:20.795Z"
+        deleted:
+          type: boolean
+          example: false
+      required:
+        - id
+        - title
+        - price
+        - type
+        - address
+        - city
+        - state
+        - country
+        - isAvailable
+        - landlordId
+        - createdAt
+        - updatedAt
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "8518d7f6-2d75-43b1-aab0-72df31fd28aa"
+        fullName:
+          type: string
+          example: "Homefinder Admin"
+        email:
+          type: string
+          format: email
+          example: "admin@gmail.com"
+        phone:
+          type: string
+          example: "08055554343"
+        password:
+          type: string
+          description: "Hashed password"
+          example: "$2b$10$gSacFOvFlgl0ZaVfo/Xkvuti2kmklY/jPlC0iWQl4fj8tlv.lTBuG"
+        isVerified:
+          type: boolean
+          example: false
+        roleId:
+          type: integer
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-06-01T13:32:52.016Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-06-01T13:32:52.016Z"
+        role:
+          $ref: '#/components/schemas/Role'
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "renter"
+
+    ValidationError:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "field"
+        msg:
+          type: string
+          example: "Please provide a valid email address"
+        path:
+          type: string
+          example: "email"
+        location:
+          type: string
+          example: "body"
+
+    StrongPasswordError:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "field"
+        value:
+          type: string
+          example: "password123"
+        msg:
+          type: string
+          example: "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character"
+        path:
+          type: string
+          example: "newPassword"
+        location:
+          type: string
+          example: "body"
+
+    CreateProperty:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Modern 2 Bedroom Apartment"
+        description:
+          type: string
+          example: "A spacious and modern apartment located in a serene neighborhood."
+        price:
+          type: number
+          format: float
+          example: 1200
+        type:
+          type: string
+          enum: [ "APARTMENT", "HOUSE", "FLAT", "TOWNHOUSE" ]
+          example: "APARTMENT"
+        address:
+          type: string
+          example: "12 Bourdillon Rd, Ikoyi"
+        city:
+          type: string
+          example: "Lagos"
+        state:
+          type: string
+          example: "Lagos"
+        country:
+          type: string
+          example: "Nigeria"
+        latitude:
+          type: number
+          format: float
+          example: 6.4463214
+        longitude:
+          type: number
+          format: float
+          example: 3.436279
+      required:
+        - title
+        - description
+        - price
+        - type
+        - address
+        - city
+        - state
+        - country
+        - latitude
+        - longitude
+
+    Pagination:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          example: 1
+        totalPage:
+          type: number
+          example: 5
+        limit:
+          type: number
+          example: 10
+        hasNext:
+          type: boolean
+          example: true
+        hasPrev:
+          type: boolean
+          example: false
+        totalCount:
+          type: number
+          example: 50
+
+    TypeFilter:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:  [ "APARTMENT", "HOUSE", "FLAT", "TOWNHOUSE" ]
+          example: "APARTMENT"
+        isAvailable:
+          type: boolean
+          example: true
+
+    BudgetFilter:
+      type: object
+      properties:
+        minPrice:
+          type: number
+          format: float
+          example: 1000
+        maxPrice:
+          type: number
+          format: float
+          example: 5000
+        isAvailable:
+          type: boolean
+          example: true
+
+    PropertyTypeResult:
+      type: object
+      properties:
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/Property'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        filter:
+          $ref: '#/components/schemas/TypeFilter'
+
+    PropertyBudgetResult:
+      type: object
+      properties:
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/Property'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        filter:
+          $ref: '#/components/schemas/BudgetFilter'
+
+    PropertyFilterResult:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            properties:
+              type: array
+              items:
+                $ref: '#/components/schemas/Property'
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "JWT token for authentication"
