@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import { StarRating } from '../interfaces/review.interface';
+import { StarRating } from '../generated/prisma';
 import HTTPException from '../exceptions/http.exception';
 import { StatusCodes } from 'http-status-codes';
 
 export class ReviewValidationMiddleware {
+  private static readonly MAX_COMMENT_LENGTH = 1000;
+  
   static validateCreateReview(req: Request, res: Response, next: NextFunction): void {
     const { rating, comment } = req.body;
     const errors: string[] = [];
@@ -16,8 +18,8 @@ export class ReviewValidationMiddleware {
     // Validate comment
     if (!comment?.trim()) {
       errors.push('Comment is required');
-    } else if (comment.length > 1000) {
-      errors.push('Comment must be less than 1000 characters');
+    } else if (comment.length > this.MAX_COMMENT_LENGTH) {
+      errors.push(`Comment must be less than ${this.MAX_COMMENT_LENGTH} characters`);
     }
 
     if (errors.length > 0) {
