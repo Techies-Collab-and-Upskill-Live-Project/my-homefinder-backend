@@ -92,6 +92,7 @@ model Property {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   deleted     Boolean         @default(false)
+  averageRating Float?      @default(0)
   images      PropertyImage[]
 
   // future support for messages, documents, bookings
