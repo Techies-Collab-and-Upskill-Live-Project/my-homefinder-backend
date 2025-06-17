@@ -37,7 +37,7 @@ export class ReviewController {
   };
 
   public getPropertyReviews = async (
-    req: Request,
+    req: Request<{ propertyId: string }, any, any, { page?: string; limit?: string }>,
     res: Response,
     next: NextFunction
   ): Promise<void> => {
