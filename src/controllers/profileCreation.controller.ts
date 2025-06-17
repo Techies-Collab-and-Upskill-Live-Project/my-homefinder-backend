@@ -5,14 +5,15 @@ import getProfileInstance from "../services/getProfile.service"
 import { RequestWithUser } from "../interfaces/auth.interface"
 const profileCreation = new userProfilesCreation
 class usercontroller{
-    public createProfile = async (req:RequestWithUser,res:Response) => {
+
+    public createProfile  = async (req:RequestWithUser,res:Response) => {
        try {
-         const user = req.query.user
+         const userRole = req.user.role
         const image = req.file?.path
         const body = req.body
-        console.log(user)
+        console.log(userRole)
         if(!image){throw new Error("user image is required")}
-        if(user == 'tenant'){
+        if(userRole == 'tenant'){
         const createProfile = await profileCreation.createProfileTenant(image,body)
         res.status(200).json({
             success:true,
@@ -21,7 +22,7 @@ class usercontroller{
         })
     }
 
-    if(user == 'landlord'){
+    if(userRole == 'landlord'){
         // landlord logic from service
         const createProfile = await profileCreation.createProfileLandlord(image,body)
         res.status(200).json({
@@ -46,10 +47,10 @@ class usercontroller{
     public updateProfile = async (req:RequestWithUser,res:Response) => {
         const body = req.body
         const image = req.file?.path
-        const userID = req.params.userId
-        const user = req.query.user
+        const userID = req.user.id
+        const userRole = req.user.role
 
-        if(user == "tenant"){
+        if(userRole == "tenant"){
             try {
                 const updateTenantProfile = await updateProfile.updateTenantProfile(image,body,userID)
                 console.log(updateTenantProfile)
@@ -71,7 +72,7 @@ class usercontroller{
         }
 
 
-        if(user == "landlord"){
+        if(userRole == "landlord"){
             try {
                 const updateLandlordProfile = await updateProfile.updateLandordProfile(image,body,userID)
                 res.status(200).json({
@@ -94,8 +95,8 @@ class usercontroller{
 
     public getProfile = async (req:RequestWithUser,res:Response) => {
         const userId = req.params.userId
-        const user = req.user.role
-        if(user == 'Tenant'){
+        const userRole = req.user.role
+        if(userRole == 'Tenant'){
             try {
                 const tenantProfile = await getProfileInstance.getTenantProfile(userId)
                 res.status(200).json({
@@ -115,7 +116,7 @@ class usercontroller{
             }
         }
 
-        if(user == 'Landlord'){
+        if(userRole == 'Landlord'){
             try {
                 const landlordProfile = await getProfileInstance.getLandlordProfile(userId)
                 res.status(200).json({

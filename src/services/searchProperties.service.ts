@@ -16,7 +16,7 @@ class Search {
         })
 
         if(queryResult.length == 0){
-            throw new Error("property that matches not found")
+            return []
         }
 
         return queryResult

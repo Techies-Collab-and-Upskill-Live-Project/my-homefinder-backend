@@ -21,13 +21,13 @@ export interface loginDataType {
   password: string;
 }
 
-export interface RequestWithUser extends Request {
-  user:{
-    id: string;
-    role?: string;
-    [key: string]: any;
+  export interface RequestWithUser extends Request {
+    user:{
+      id: string;
+      role?: string;
+      [key: string]: any;
+    }
   }
-}
 
 export interface DataStoreInJWT {
   id: string;
