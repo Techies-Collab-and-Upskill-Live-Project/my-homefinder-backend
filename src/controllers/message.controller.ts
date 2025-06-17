@@ -1,16 +1,10 @@
-import {Request, Response, NextFunction} from "express";
-import {PrismaClient} from "@prisma/client";
+import {Response, NextFunction} from "express";
 import {RequestWithUser} from "../interfaces/auth.interface";
 import {StatusCodes} from "http-status-codes";
 import {prisma} from "../prisma/prisma";
 
 
 export class MessageController {
-    private clientPrisma: typeof prisma;
-
-    constructor() {
-        this.clientPrisma = prisma;
-    }
 
     public sendMessage = async (
         req: RequestWithUser,
@@ -21,7 +15,7 @@ export class MessageController {
             const {receiverId, content, propertyId} = req.body;
             const senderId = req.user.id;
 
-            const message = await this.clientPrisma.message.create({
+            const message = await prisma.message.create({
                 data: {
                     content,
                     senderId,
@@ -45,7 +39,7 @@ export class MessageController {
             const userId = req.user.id;
             const withUserId = req.params.withUserId;
 
-            const messages = await this.clientPrisma.message.findMany({
+            const messages = await prisma.message.findMany({
                 where: {
                     OR: [
                         {senderId: userId, receiverId: withUserId},

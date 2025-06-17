@@ -1,16 +1,8 @@
 import cloudinary from "../config/uploadProfileImageCloudinary"
 import fs from 'fs'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../prisma/prisma';
 import { tenantProfileInterface } from "../interfaces/profile.interface"
 class userProfilesCreation{
-
-    public prisma : PrismaClient
-    constructor(){
-    this.prisma = new PrismaClient()
-    }
-
-
-
     
     public async createProfileTenant(image:string,body:tenantProfileInterface){
         console.log(body)
@@ -34,19 +26,19 @@ class userProfilesCreation{
         if(!NIN || NIN == ''){throw new Error('fullname is required')}
         // fetch user data 
         // where userId = dskdjsdj
-        const user = await this.prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
             where:{id : "dskdjsdj"}
         })
         if(!user){
             throw new Error("user dows not exist")
         }
-        const checkProfile = await this.prisma.tenantProfile.findFirst({
+        const checkProfile = await prisma.tenantProfile.findFirst({
             where:{userId : user.id}
         })
         if(checkProfile){
             throw new Error("profile already exists");
         }
-        const tenantProfile = await this.prisma.tenantProfile.create({
+        const tenantProfile = await prisma.tenantProfile.create({
             data: {
                 profileImage: imageUrl,
         fullName: fullName,
@@ -82,7 +74,7 @@ class userProfilesCreation{
             folder:'uploads'
         })
         // check if user exists
-        const user = await this.prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
             where:{id:"dskdjsdj"}
         })
         if(!user){
@@ -94,7 +86,7 @@ class userProfilesCreation{
 
        
         // upload to psql database
-        const createLandlordProfile = await this.prisma.landLordProfile.create({
+        const createLandlordProfile = await prisma.landLordProfile.create({
             data:{
                 profileImage:imageUrl,
                 typeOfHouse:typeOfHouse,
