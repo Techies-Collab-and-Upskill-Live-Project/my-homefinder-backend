@@ -1,5 +1,6 @@
 import { prisma } from '../prisma/prisma';
-import { CreateReviewInput, ReviewFilter, StarRating } from '../interfaces/review.interface';
+import { Review } from '../generated/prisma';
+import { CreateReviewInput, ReviewFilter, PaginatedResponse, PaginationParams} from '../interfaces/review.interface';
 import HTTPException from '../exceptions/http.exception';
 import { StatusCodes } from 'http-status-codes';
 
@@ -47,28 +48,48 @@ export class ReviewService {
     }
   }
 
-  async getReviews(filter: ReviewFilter) {
+  async getReviews(
+    filter: ReviewFilter,
+    { page = 1, limit = 10 }: PaginationParams
+  ): Promise<PaginatedResponse<Review>> {
     try {
-      const reviews = await prisma.review.findMany({
-        where: filter,
-        include: {
-          reviewer: {
-            select: {
-              id: true,
-              fullName: true
+      const skip = (page - 1) * limit;
+
+      const [reviews, total] = await prisma.$transaction([
+        prisma.review.findMany({
+          where: filter,
+          include: {
+            reviewer: {
+              select: {
+                id: true,
+                fullName: true
+              }
+            },
+            property: {
+              select: {
+                id: true,
+                title: true
+              }
             }
           },
-          property: {
-            select: {
-              id: true,
-              title: true,
-              address: true
-            }
-          }
-        },
-        orderBy: { createdAt: 'desc' },
-      });
-      return reviews;
+          orderBy: { createdAt: 'desc' },
+          skip,
+          take: limit
+        }),
+        prisma.review.count({ where: filter })
+      ]);
+
+      const totalPages = Math.ceil(total / limit);
+
+      return {
+        data: reviews,
+        metadata: {
+          total,
+          page,
+          limit,
+          totalPages
+        }
+      };
     } catch (error) {
       throw new HTTPException(
         StatusCodes.INTERNAL_SERVER_ERROR,
@@ -78,14 +99,24 @@ export class ReviewService {
   }
 
   private async updatePropertyAverageRating(propertyId: string) {
-    const avgRating = await prisma.review.aggregate({
+
+    const reviews = await prisma.review.findMany({
       where: { propertyId },
-      _avg: { rating: true }
+      select: {
+        rating: true 
+      }
     });
+
+    const totalRating = reviews.reduce((sum, review) => sum + (typeof review.rating === 'number' ? review.rating : 0), 0);
+
+    const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
 
     await prisma.property.update({
       where: { id: propertyId },
-      data: { averageRating: avgRating._avg.rating || 0 }
-    });
+      data: {
+        averageRating: averageRating
+      }
+    })
+  
   }
 }
