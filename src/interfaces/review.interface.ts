@@ -1,10 +1,4 @@
-export enum StarRating {
-  ONE = 1,
-  TWO = 2,
-  THREE = 3,
-  FOUR = 4,
-  FIVE = 5
-}
+import { StarRating } from '../generated/prisma';
 
 export interface CreateReviewInput {
   reviewerId: string;
@@ -22,4 +16,19 @@ export interface ReviewResponse {
   message: string;
   data?: any;
   error?: string;
+}
+
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  metadata: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }

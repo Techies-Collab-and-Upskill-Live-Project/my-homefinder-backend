@@ -37,19 +37,24 @@ export class ReviewController {
   };
 
   public getPropertyReviews = async (
-    req: Request,
+    req: Request<{ propertyId: string }, any, any, { page?: string; limit?: string }>,
     res: Response,
     next: NextFunction
   ): Promise<void> => {
     try {
       const { propertyId } = req.params;
-      
-      const reviews = await this.reviewService.getReviews({ propertyId });
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      const result = await this.reviewService.getReviews(
+        { propertyId },
+        { page, limit }
+      );
       
       res.status(StatusCodes.OK).json({
         success: true,
         message: 'Reviews fetched successfully',
-        data: reviews,
+        ...result
       });
     } catch (error) {
       next(error);
