@@ -25,6 +25,7 @@ export interface loginDataType {
     user:{
       id: string;
       role?: string;
+      roleId?:number;
       [key: string]: any;
     }
   }

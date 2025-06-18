@@ -3,12 +3,20 @@ import userProfilesCreation from "../services/userProfileCreation.service"
 import updateProfile from "../services/updateProfile.service"
 import getProfileInstance from "../services/getProfile.service"
 import { RequestWithUser } from "../interfaces/auth.interface"
+import { PrismaClient } from "@prisma/client"
 const profileCreation = new userProfilesCreation
 class usercontroller{
-
+    public prisma : PrismaClient
+    constructor(){
+        this.prisma = new PrismaClient()
+    }
     public createProfile  = async (req:RequestWithUser,res:Response) => {
        try {
-         const userRole = req.user.role
+         const userRoleId = req.user.roleId
+         const userRoleResponse = await this.prisma.role.findFirst({
+            where:{id:userRoleId}
+         })
+        const userRole = userRoleResponse?.name
         const image = req.file?.path
         const body = req.body
         console.log(userRole)
@@ -48,7 +56,12 @@ class usercontroller{
         const body = req.body
         const image = req.file?.path
         const userID = req.user.id
-        const userRole = req.user.role
+        
+        const userRoleId = req.user.roleId
+         const userRoleResponse = await this.prisma.role.findFirst({
+            where:{id:userRoleId}
+         })
+        const userRole = userRoleResponse?.name
 
         if(userRole == "tenant"){
             try {
@@ -95,7 +108,11 @@ class usercontroller{
 
     public getProfile = async (req:RequestWithUser,res:Response) => {
         const userId = req.params.userId
-        const userRole = req.user.role
+        const userRoleId = req.user.roleId
+         const userRoleResponse = await this.prisma.role.findFirst({
+            where:{id:userRoleId}
+         })
+        const userRole = userRoleResponse?.name
         if(userRole == 'Tenant'){
             try {
                 const tenantProfile = await getProfileInstance.getTenantProfile(userId)
