@@ -2,7 +2,7 @@ import { prisma } from '../prisma/prisma';
 import HTTPException from "../exceptions/http.exception";
 import { StatusCodes } from "http-status-codes";
 import { geocodeAddress } from "../utils/geocode.util";
-import { PropertyType } from '@prisma/client';
+import { PropertyType } from '../generated/prisma';
 import {createPropertyData, PropertyFilters, PropertyQueryOptions} from '../interfaces/property.interface';
 import {isEmpty} from "../utils/isEmpty.util";
 
