@@ -44,7 +44,7 @@ describe("PropetyController", () => {
 
             (propertyService.getPropertiesInLocation as jest.Mock).mockResolvedValue(mockProperties);
 
-            await propertyController.getPropertiesInLocation(mockReq as RequestWithUser, mockRes as Response, mockNext as NextFunction);
+            await propertyController.getPropertiesAtLocation(mockReq as RequestWithUser, mockRes as Response, mockNext as NextFunction);
 
             expect(propertyService.getPropertiesInLocation).toHaveBeenCalledWith(mockLocation, mockRadius);
             expect(mockRes.status).toHaveBeenCalledWith(200);

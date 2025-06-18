@@ -1,20 +1,15 @@
 import { StatusCodes } from "http-status-codes";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from '../prisma/prisma';
 import HTTPException from "../exceptions/http.exception";
 import { MulterFile } from "../interfaces/multerFile.interface";
 
 export class UploadService {
-  private prisma: PrismaClient;
-
-  constructor() {
-    this.prisma = new PrismaClient();
-  }
-
+  
   public saveDocToDB = async (file: MulterFile, userid: string) => {
     if (!file) {
       throw new HTTPException(StatusCodes.BAD_REQUEST, "File is missing");
     }
-    const userDoucment = await this.prisma.userDocument.create({
+    const userDoucment = await prisma.userDocument.create({
       data: {
         userId: userid,
         fileName: file.filename,
@@ -40,7 +35,7 @@ export class UploadService {
       fileDataArray.push(fileData);
     }
 
-    const userDocuments = await this.prisma.userDocument.createMany({
+    const userDocuments = await prisma.userDocument.createMany({
       data: fileDataArray,
     });
 

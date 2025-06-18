@@ -1,7 +1,6 @@
 import multer from "multer";
 import { storage } from "../config/cloudinary.config";
 import { Request, Response, NextFunction } from "express";
-import { StatusCodes } from "http-status-codes";
 
 export const uploadMiddleware = async (
   req: Request,

@@ -3,7 +3,7 @@ import { JWT_SECRET } from "../config";
 import { verify } from "jsonwebtoken";
 import { DataStoreInJWT, RequestWithUser } from "../interfaces/auth.interface";
 import HTTPException from "../exceptions/http.exception";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from '../prisma/prisma';
 import { StatusCodes } from "http-status-codes";
 
 export const authMiddleware = async (
@@ -12,7 +12,6 @@ export const authMiddleware = async (
   next: NextFunction,
 ) => {
   try {
-    const prisma = new PrismaClient();
     const Authorization =
       req.cookies["Authorization"] ||
       (req.headers.authorization
@@ -26,6 +25,7 @@ export const authMiddleware = async (
         secretKey,
       ) as DataStoreInJWT;
       const userId = verificationResponse.id;
+      
       const findUser = await prisma.user.findUnique({
         where: {
           id: userId,

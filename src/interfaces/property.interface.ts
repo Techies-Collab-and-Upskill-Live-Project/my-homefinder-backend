@@ -1,4 +1,4 @@
-import {PropertyType, User} from '@prisma/client';
+import {PropertyType, User} from '../generated/prisma';
 
 export interface PropertyFilters {
   type?: PropertyType;
