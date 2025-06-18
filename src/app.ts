@@ -7,7 +7,7 @@ import { CREDENTIALS, PORT } from "./config";
 import errorMiddleware from "./middlewares/error.middleware";
 import { notFoundError } from "./middlewares/notfound.middleware";
 import { Routes } from "./interfaces/route.interface";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "./generated/prisma";
 import swaggerUi from  "swagger-ui-express";
 import YAML from "yamljs";
 
