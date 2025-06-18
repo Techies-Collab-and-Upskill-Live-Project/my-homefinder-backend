@@ -30,7 +30,7 @@ export class MessageController {
       const userId = req.user.id;
       const withUserId = req.params.withUserId;
 
-      const messages = await this.messageService.getThread(userId, withUserId);
+      const messages = await this.messageService.getMessagesInThread(userId, withUserId);
 
       res.status(StatusCodes.OK).json({ data: messages });
     } catch (error) {

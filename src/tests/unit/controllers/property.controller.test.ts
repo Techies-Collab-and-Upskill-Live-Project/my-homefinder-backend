@@ -44,17 +44,16 @@ describe("PropetyController", () => {
 
       await propertyController.createProperty(mockReq as RequestWithUser, mockRes as Response, mockNext as NextFunction);
 
-      expect(propertyService.createProperty).toHaveBeenCalledWith({
-        title: "New Property",
-        city: "Lagos",
-        landlordId: "landlord123",
-      });
+      expect(propertyService.createProperty).toHaveBeenCalledWith(
+        { title: "New Property", city: "Lagos" },
+        "landlord123"
+      );
       expect(mockRes.status).toHaveBeenCalledWith(201);
       expect(mockRes.json).toHaveBeenCalledWith({ message: "Property created", property: mockProperty });
     });
   });
 
-  // This method is used to get a property by its ID
+// This method is used to get a property by its ID
   describe("getPropertyById", () => {
     it("should return the property by ID", async () => {
       const mockProperty = { id: "1", title: "House A", deleted: false };
@@ -91,7 +90,7 @@ describe("PropetyController", () => {
     });
   });
 
-  // This method is used to update a property
+// This method is used to update a property
   describe("updateProperty", () => {
     it("should update a property", async () => {
       const updatedProperty = { id: "1", title: "Updated Property" };
@@ -162,9 +161,9 @@ describe("PropetyController", () => {
 
       (propertyService.getPropertiesInLocation as jest.Mock).mockResolvedValue(mockProperties);
 
-      await propertyController.getPropertiesInLocation(mockReq as RequestWithUser, mockRes as Response, mockNext as NextFunction);
+      await propertyController.getPropertiesAtLocation(mockReq as RequestWithUser, mockRes as Response, mockNext as NextFunction);
 
-      expect(propertyService.getPropertiesInLocation).toHaveBeenCalledWith(mockLocation, mockRadius);
+      expect(propertyService.getPropertiesInLocation).toHaveBeenCalledWith(mockLocation, mockRadius, 1, 10);
       expect(mockRes.status).toHaveBeenCalledWith(200);
       expect(mockRes.json).toHaveBeenCalledWith({ data: mockProperties });
     });
@@ -199,7 +198,7 @@ describe("PropetyController", () => {
 
       await propertyController.getPropertyNearBy(mockReq as RequestWithUser, mockRes as Response, mockNext as NextFunction);
 
-      expect(propertyService.getPropertyNearBy).toHaveBeenCalledWith(mockLat, mockLng, mockRadius);
+      expect(propertyService.getPropertyNearBy).toHaveBeenCalledWith(mockLat, mockLng, mockRadius, 1, 10);
       expect(mockRes.status).toHaveBeenCalledWith(200);
       expect(mockRes.json).toHaveBeenCalledWith({ data: mockProperties });
     });
