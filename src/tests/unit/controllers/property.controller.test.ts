@@ -68,41 +68,9 @@ describe("PropetyController", () => {
 
       await propertyController.getPropertyById(mockReq as RequestWithUser, mockRes as Response, mockNext as NextFunction);
 
-<<<<<<< test/bruno-test-file
       expect(propertyService.getPropertyById).toHaveBeenCalledWith("1");
       expect(mockRes.status).toHaveBeenCalledWith(200);
       expect(mockRes.json).toHaveBeenCalledWith({ property: mockProperty });
-=======
-    // Mocking the getPropertiesInLocation 
-    // This method is used to get properties in a specific location with a given radius
-    describe("getPropertiesInLocation", () => {
-        it("should return properties in a specific location", async () => {
-            const mockLocation = "New York";
-            const mockRadius = 10.0;
-            const mockProperties = [{ id: 1, name: "Property 1" }];
-
-            mockReq = {
-                query: {
-                    location: mockLocation,
-                    radius: mockRadius.toString(),
-                },
-            };
-
-            mockRes = {
-                status: jest.fn().mockReturnThis(),
-                json: jest.fn(),
-            };
-            mockNext = jest.fn();
-
-            (propertyService.getPropertiesInLocation as jest.Mock).mockResolvedValue(mockProperties);
-
-            await propertyController.getPropertiesAtLocation(mockReq as RequestWithUser, mockRes as Response, mockNext as NextFunction);
-
-            expect(propertyService.getPropertiesInLocation).toHaveBeenCalledWith(mockLocation, mockRadius);
-            expect(mockRes.status).toHaveBeenCalledWith(200);
-            expect(mockRes.json).toHaveBeenCalledWith({ data: mockProperties });
-        });
->>>>>>> development-branch
     });
 
     it("should return 404 if property is not found or deleted", async () => {
@@ -144,6 +112,36 @@ describe("PropetyController", () => {
       expect(propertyService.updateProperty).toHaveBeenCalledWith("1", "landlord123", { title: "Updated Property" });
       expect(mockRes.status).toHaveBeenCalledWith(200);
       expect(mockRes.json).toHaveBeenCalledWith({ message: "Property updated", property: updatedProperty });
+    });
+  });
+
+  // Mocking the getPropertiesInLocation 
+  describe("getPropertiesInLocation", () => {
+    it("should return properties in a specific location", async () => {
+      const mockLocation = "New York";
+      const mockRadius = 10.0;
+      const mockProperties = [{ id: 1, name: "Property 1" }];
+
+      mockReq = {
+        query: {
+          location: mockLocation,
+          radius: mockRadius.toString(),
+        },
+      };
+
+      mockRes = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+      mockNext = jest.fn();
+
+      (propertyService.getPropertiesInLocation as jest.Mock).mockResolvedValue(mockProperties);
+
+      await propertyController.getPropertiesAtLocation(mockReq as RequestWithUser, mockRes as Response, mockNext as NextFunction);
+
+      expect(propertyService.getPropertiesInLocation).toHaveBeenCalledWith(mockLocation, mockRadius, 1, 10);
+      expect(mockRes.status).toHaveBeenCalledWith(200);
+      expect(mockRes.json).toHaveBeenCalledWith({ data: mockProperties });
     });
   });
 });
