@@ -18,10 +18,10 @@ class UserRoutes implements Routes {
   //same as that of update profile
 
   private initializeRoutes() {
-    this.router.post("/createProfile/", upload.single("image"),authMiddleware, userProfileController.createProfile);
-    this.router.patch("/updateProfile/:userId", upload.single("image"),authMiddleware, userProfileController.updateProfile)
-    this.router.get("/getTenantProfile/:userId",authMiddleware,tenantAccess,userProfileController.getProfile)
-    this.router.get("/getLandlordProfile/:userId",authMiddleware,landLordAccess,userProfileController.getProfile)
+    this.router.post("/createProfile", upload.single("image"),authMiddleware, userProfileController.createProfile);
+    this.router.patch("/updateProfile", upload.single("image"),authMiddleware, userProfileController.updateProfile)
+    this.router.get("/getTenantProfile",authMiddleware,tenantAccess,userProfileController.getProfile)
+    this.router.get("/getLandlordProfile",authMiddleware,landLordAccess,userProfileController.getProfile)
   }
 }
 export default UserRoutes;
