@@ -1,7 +1,6 @@
 {
   "name": "my-homefinder-backend",
   "version": "1.0.0",
-  "type": "commonjs",
   "scripts": {
     "test": "jest --coverage",
     "dev": "cross-env NODE_ENV=development nodemon src/server.ts",

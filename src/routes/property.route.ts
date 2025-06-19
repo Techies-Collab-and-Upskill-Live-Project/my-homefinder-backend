@@ -104,9 +104,3 @@ export class PropertyRoute implements Routes {
         )
     }
 }
-
-
-// get property by city or area
-router.get("/searchProperties/:search",search.searchFunction)
-
-export default router;
