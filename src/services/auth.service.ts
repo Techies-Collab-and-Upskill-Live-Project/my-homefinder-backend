@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import HTTPException from "../exceptions/http.exception";
 import { isEmpty } from "../utils/isEmpty.util";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prisma/prisma";
 import { comparePassword, hashPassword } from "../utils/hash.util";
 import {
   loginDataType,
@@ -11,11 +11,7 @@ import {
 import { generateToken } from "../utils/jwt.util";
 
 export class AuthService {
-  private prisma: PrismaClient;
-  constructor() {
-    this.prisma = new PrismaClient();
-  }
-
+  
   public signup = async (userData: signUpDataType) => {
     if (isEmpty(userData)) {
       throw new HTTPException(StatusCodes.BAD_REQUEST, "Empty user data");
@@ -30,7 +26,7 @@ export class AuthService {
       );
     }
 
-    const existingUser = await this.prisma.user.findFirst({
+    const existingUser = await prisma.user.findFirst({
       where: {
         OR: [{ email }, { phone }],
       },
@@ -44,19 +40,19 @@ export class AuthService {
       throw new HTTPException(StatusCodes.BAD_REQUEST, "Passwords don't match");
     }
 
-    let userRole = await this.prisma.role.findUnique({
+    let userRole = await prisma.role.findUnique({
       where: { name: role.toLowerCase() },
     });
 
     if (!userRole) {
-      userRole = await this.prisma.role.create({
+      userRole = await prisma.role.create({
         data: { name: role.toLowerCase() },
       });
     }
 
     const hashedPassword = await hashPassword(password);
 
-    const newUser = await this.prisma.user.create({
+    const newUser = await prisma.user.create({
       data: {
         fullName,
         email,
@@ -80,7 +76,7 @@ export class AuthService {
 
     const { emailOrPhone, password } = loginData;
 
-    const user = await this.prisma.user.findFirst({
+    const user = await prisma.user.findFirst({
       where: {
         OR: [{ email: emailOrPhone }, { phone: emailOrPhone }],
       },
@@ -111,7 +107,7 @@ export class AuthService {
       throw new HTTPException(StatusCodes.BAD_REQUEST, "Empty user Id");
     }
 
-    const user = await this.prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         id: userId,
       },

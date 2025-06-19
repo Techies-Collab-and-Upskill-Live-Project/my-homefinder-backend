@@ -9,7 +9,6 @@ import {
   forgotPasswordLimiter,
   resetPasswordLimiter,
 } from "../middlewares/rate-limiter.middleware";
-import { asyncHandler } from "../utils/asyncHandler.util";
 
 export class AuthRoute implements Routes {
   public path = "/api/v1/auth";
