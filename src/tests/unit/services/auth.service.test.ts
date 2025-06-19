@@ -1,20 +1,3 @@
-import { AuthService } from '../../../services/auth.service';
-import HTTPException from '../../../exceptions/http.exception';
-import { PrismaClient } from '@prisma/client';
-import { comparePassword, hashPassword } from '../../../utils/hash.util';
-import { generateToken } from '../../../utils/jwt.util';
-
-jest.mock('../../../utils/hash.util', () => ({
-  comparePassword: jest.fn(),
-  hashPassword: jest.fn().mockResolvedValue('hashedPassword')
-}));
-
-jest.mock('../../../utils/jwt.util', () => ({
-  generateToken: jest.fn(() => ({
-    token: 'mockToken',
-    expiresIn: 86400
-  }))
-}));
 
 const mockPrisma = {
   user: {
@@ -28,9 +11,28 @@ const mockPrisma = {
   }
 };
 
-jest.mock('@prisma/client', () => ({
-  PrismaClient: jest.fn().mockImplementation(() => mockPrisma)
+jest.mock('@prisma/client', () => {
+  return {
+    PrismaClient: jest.fn(() => mockPrisma)
+  };
+});
+
+jest.mock('../../../utils/hash.util', () => ({
+  comparePassword: jest.fn(),
+  hashPassword: jest.fn().mockResolvedValue('hashedPassword')
 }));
+
+jest.mock('../../../utils/jwt.util', () => ({
+  generateToken: jest.fn(() => ({
+    token: 'mockToken',
+    expiresIn: 86400
+  }))
+}));
+
+import { AuthService } from '../../../services/auth.service';
+import HTTPException from '../../../exceptions/http.exception';
+import { comparePassword, hashPassword } from '../../../utils/hash.util';
+import { generateToken } from '../../../utils/jwt.util';
 
 describe('AuthService', () => {
   let authService: AuthService;
