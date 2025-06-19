@@ -11,7 +11,7 @@ const mockPrisma = {
   }
 };
 
-jest.mock('@prisma/client', () => {
+jest.mock('../../../generated/prisma', () => {
   return {
     PrismaClient: jest.fn(() => mockPrisma)
   };
