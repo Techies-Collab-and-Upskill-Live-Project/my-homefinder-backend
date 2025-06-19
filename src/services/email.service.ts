@@ -40,7 +40,8 @@ export class EmailService {
       await this.transporter.verify();
       return true;
     } catch (error) {
-      throw new HTTPException(StatusCodes.UNPROCESSABLE_ENTITY, 'Email service connection failed');
+      console.error('Email service connection failed:', error);
+      return false;
     }
   }
 }
