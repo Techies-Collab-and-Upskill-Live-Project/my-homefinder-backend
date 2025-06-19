@@ -1,4 +1,3 @@
-import express from "express"
 import upload from "../middlewares/upload"
 import userProfileController from "../controllers/profileCreation.controller";
 import { Router } from "express";

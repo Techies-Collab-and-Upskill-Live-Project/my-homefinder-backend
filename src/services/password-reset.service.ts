@@ -3,6 +3,8 @@ import { EmailService } from './email.service';
 import { OTPGenerator } from '../utils/otp-generator.util';
 import { hashPassword, comparePassword } from '../utils/hash.util';
 import { config } from '../config';
+import HTTPException from "../exceptions/http.exception";
+import {StatusCodes} from "http-status-codes";
 
 export class PasswordResetService {
   private emailService: EmailService;
@@ -65,8 +67,7 @@ export class PasswordResetService {
         message: 'Password reset code sent to your email address.',
       };
     } catch (error) {
-      console.error('Error in initiateForgotPassword:', error);
-      throw new Error('Failed to process password reset request');
+      throw new HTTPException(StatusCodes.BAD_REQUEST,'Failed to process password reset request');
     }
   }
 
@@ -122,8 +123,7 @@ export class PasswordResetService {
         message: 'Password reset successfully.',
       };
     } catch (error) {
-      console.error('Error in resetPassword:', error);
-      throw new Error('Failed to reset password');
+      throw new HTTPException(StatusCodes.BAD_REQUEST,'Failed to reset password');
     }
   }
 
@@ -138,7 +138,7 @@ export class PasswordResetService {
         },
       });
     } catch (error) {
-      console.error('Error cleaning up expired tokens:', error);
+      throw new HTTPException(StatusCodes.INTERNAL_SERVER_ERROR, "Error cleaning up expired tokens")
     }
   }
 }

@@ -8,6 +8,7 @@ import {
 } from "../interfaces/auth.interface";
 import { StatusCodes } from "http-status-codes";
 import { AuthService } from "../services/auth.service";
+import HTTPException from "../exceptions/http.exception";
 
 export class AuthController {
   private passwordResetService: PasswordResetService;
@@ -22,7 +23,7 @@ export class AuthController {
       const user = await this.authService.signup(req.body);
       res
         .status(StatusCodes.CREATED)
-        .json({ data: user, message: "User registered", user });
+        .json({ data: user, message: "User registered" });
     } catch (error) {
       next(error);
     }
@@ -74,7 +75,7 @@ export class AuthController {
         message: result.message,
       };
 
-      res.status(200).json(response);
+      res.status(StatusCodes.OK).json(response);
     } catch (error) {
       console.error("Forgot password error:", error);
 
@@ -83,8 +84,7 @@ export class AuthController {
         message:
           "An error occurred while processing your request. Please try again later.",
       };
-
-      res.status(500).json(response);
+      throw new HTTPException(StatusCodes.INTERNAL_SERVER_ERROR, response.message);
     }
   };
 
@@ -102,10 +102,8 @@ export class AuthController {
         message: result.message,
       };
 
-      const statusCode = result.success ? 200 : 400;
-      res.status(statusCode).json(response);
+      res.status(StatusCodes.OK).json(response);
     } catch (error) {
-      console.error("Reset password error:", error);
 
       const response: ApiResponse = {
         success: false,
@@ -113,7 +111,7 @@ export class AuthController {
           "An error occurred while processing your request. Please try again later.",
       };
 
-      res.status(500).json(response);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response.message);
     }
   };
 }

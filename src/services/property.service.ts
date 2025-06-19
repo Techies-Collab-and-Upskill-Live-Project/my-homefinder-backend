@@ -2,8 +2,9 @@ import { prisma } from '../prisma/prisma';
 import HTTPException from "../exceptions/http.exception";
 import { StatusCodes } from "http-status-codes";
 import { geocodeAddress } from "../utils/geocode.util";
-import { PropertyType } from '@prisma/client';
-import { PropertyFilters, PropertyQueryOptions } from '../interfaces/property.interface';
+import { PropertyType } from '../generated/prisma';
+import {createPropertyData, PropertyFilters, PropertyQueryOptions} from '../interfaces/property.interface';
+import {isEmpty} from "../utils/isEmpty.util";
 
 export class PropertyService {
 
@@ -12,9 +13,38 @@ private prisma: typeof prisma;
     this.prisma = prisma;
   } 
 
-  public createProperty = async (data: any) => {
-    const property = await this.prisma.property.create({ data });
-    return property;
+  public createProperty = async (data: createPropertyData, userId: string) => {
+    if(isEmpty(data)){
+      throw new HTTPException(StatusCodes.BAD_REQUEST, "Property data cannot be empty");
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    })
+
+    if(!user){
+      throw new HTTPException(StatusCodes.NOT_FOUND, "Landlord not found");
+    }
+    if(!data.address){
+      throw new HTTPException(StatusCodes.BAD_REQUEST, "Address is required");
+    }
+    const formattedAddress = await geocodeAddress(`${data.address}, ${data.city}, ${data.state}, ${data.country}`);
+    const newProperty = await this.prisma.property.create({
+      data: {
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        type: data.type,
+        city: data.city,
+        state: data.state,
+        country: data.country,
+        address: formattedAddress.formatedAddress,
+        latitude: formattedAddress.lat,
+        longitude: formattedAddress.lng,
+        landlordId: userId,
+      },
+    });
+    return newProperty;
   };
 
   public getPropertyById = async (id: string) => {
@@ -32,7 +62,7 @@ private prisma: typeof prisma;
     if (property.landlordId !== userId) {
       throw new HTTPException(StatusCodes.FORBIDDEN, "Unauthorized");
     }
-    const updated = await prisma.property.update({
+    const updated = await this.prisma.property.update({
       where: { id },
       data,
     });
@@ -54,13 +84,30 @@ private prisma: typeof prisma;
   };
 
   // get Properties in a specific location with a given radius
-  public getPropertiesInLocation = async (location: string, radius: number) => {
+  public getPropertiesInLocation = async (location: string, radius: number, page: number , limit: number) => {
     if (!location || typeof location !== "string") {
       throw new HTTPException(StatusCodes.BAD_REQUEST, "Invalid location");
     }
 
     const geoLocation = await geocodeAddress(location);
-    console.log(geoLocation);
+    const offset = (page - 1) * limit;
+    // Get total count for pagination
+    const countResult: any = await this.prisma.$queryRaw`SELECT COUNT(*) FROM (
+      SELECT *,
+        (6371 * acos(
+          cos(radians(${geoLocation.lat})) *
+          cos(radians(latitude)) *
+          cos(radians(longitude) - radians(${geoLocation.lng})) +
+          sin(radians(${geoLocation.lat})) *
+          sin(radians(latitude))
+        )) AS distance
+      FROM "Property"
+    ) AS subquery
+    WHERE distance < ${radius}`;
+    const totalCount = Number(countResult[0]?.count || countResult[0]?.count || 0);
+    const totalPages = Math.ceil(totalCount / limit);
+    const hasNext = page < totalPages;
+    const hasPrev = page > 1;
     const properties = await this.prisma.$queryRaw`
       SELECT * FROM (
         SELECT *,
@@ -75,8 +122,19 @@ private prisma: typeof prisma;
       ) AS subquery
       WHERE distance < ${radius}
       ORDER BY distance ASC
+      LIMIT ${limit} OFFSET ${offset}
     `;
-    return properties;
+    return {
+      properties,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        limit,
+        hasNext,
+        hasPrev,
+        totalCount
+      }
+    };
   };
 
   // get Properties nearby the current location
@@ -84,10 +142,30 @@ private prisma: typeof prisma;
     lat: number,
     lng: number,
     radius: number,
+    page: number,
+    limit: number
   ) => {
     if (!lat || !lng || isNaN(Number(lat)) || isNaN(Number(lng))) {
       throw new HTTPException(StatusCodes.BAD_REQUEST, "Invalid coordinates");
     }
+    const offset = (page - 1) * limit;
+    // Get total count for pagination
+    const countResult: any = await this.prisma.$queryRaw`SELECT COUNT(*) FROM (
+      SELECT *,
+        (6371 * acos(
+          cos(radians(${lat})) *
+          cos(radians(latitude)) *
+          cos(radians(longitude) - radians(${lng})) +
+          sin(radians(${lat})) *
+          sin(radians(latitude))
+        )) AS distance
+      FROM "Property"
+    ) AS subquery
+    WHERE distance < ${radius}`;
+    const totalCount = Number(countResult[0]?.count || countResult[0]?.count || 0);
+    const totalPages = Math.ceil(totalCount / limit);
+    const hasNext = page < totalPages;
+    const hasPrev = page > 1;
     const properties = await this.prisma.$queryRaw`
       SELECT * FROM (
         SELECT *,
@@ -102,8 +180,19 @@ private prisma: typeof prisma;
       ) AS subquery
       WHERE distance < ${radius}
       ORDER BY distance ASC
+      LIMIT ${limit} OFFSET ${offset}
     `;
-    return properties;
+    return {
+      properties,
+      pagination:{
+        currentPage: page,
+        totalPages,
+        limit,
+        hasNext,
+        hasPrev,
+        totalCount
+      }
+    };
   };
 
   async getFilteredProperties(

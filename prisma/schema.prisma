@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  //output = "node_modules/@prisma/client"
+  output = "../src/generated/prisma"
 }
 
 datasource db {
@@ -21,16 +21,17 @@ model Role {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  fullName   String
-  email      String   @unique
-  phone      String   @unique
-  password   String
-  isVerified Boolean  @default(false)
-  roleId     Int
-  role       Role     @relation(fields: [roleId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id           String   @id @default(uuid())
+  fullName     String
+  email        String   @unique
+  phone        String   @unique
+  password     String
+  isVerified   Boolean  @default(false)
+  roleId       Int
+  role         Role     @relation(fields: [roleId], references: [id])
+  reviewsGiven Review[] @relation("Reviewer")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   // Password reset tokens
   passwordResetTokens PasswordResetToken[]
@@ -38,7 +39,7 @@ model User {
   properties          Property[]
 
   //landlord and tenant profile
-  tenants TenantProfile[]
+  tenants   TenantProfile[]
   landlords LandLordProfile[]
 
   sentMessages     Message[] @relation("SentMessages")
@@ -74,7 +75,7 @@ enum VerificationStatus {
 }
 
 model Property {
-  id          String       @id @default(uuid())
+  id          String          @id @default(uuid())
   title       String
   description String
   price       Float
@@ -85,16 +86,28 @@ model Property {
   country     String
   latitude    Float?
   longitude   Float?
-  isAvailable Boolean      @default(true)
+  isAvailable Boolean         @default(true)
   landlordId  String
-  landlord    User         @relation(fields: [landlordId], references: [id])
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  deleted     Boolean      @default(false)
+  landlord    User            @relation(fields: [landlordId], references: [id], onDelete: Cascade)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  deleted     Boolean         @default(false)
+  averageRating Float?      @default(0)
+  images      PropertyImage[]
 
   // future support for messages, documents, bookings
+  reviews Review[]
 
- messages      Message[]  @relation("PropertyMessages")
+  messages Message[] @relation("PropertyMessages")
+}
+
+model PropertyImage {
+  id         String   @id @default(uuid())
+  propertyId String
+  url        String
+  createdAt  DateTime @default(now())
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 }
 
 enum PropertyType {
@@ -105,50 +118,69 @@ enum PropertyType {
   OFFICE
 }
 
-
-
 model TenantProfile {
-  id  Int @id @default(autoincrement())
+  id           Int    @id @default(autoincrement())
   profileImage String
-  fullName String
-  phoneNumber String @unique
-  street String
-  city String
-  state String
-  NIN String @unique
-  userId String
-  user User @relation(fields: [userId], references: [id])
+  fullName     String
+  phoneNumber  String @unique
+  street       String
+  city         String
+  state        String
+  NIN          String @unique
+  userId       String
+  user         User   @relation(fields: [userId], references: [id])
 }
 
 model LandLordProfile {
-  id Int @id @default(autoincrement())
-  profileImage String
-  typeOfHouse String
-  numberOfRooms String
-  otherInfo String
-  street String
-  preference Preference @default(calls)
-  NIN String @unique
-  driversLicense String @unique
-  BVN String @unique
-  userId String
-  user User @relation(fields: [userId], references: [id]) 
+  id             Int        @id @default(autoincrement())
+  profileImage   String
+  typeOfHouse    String
+  numberOfRooms  String
+  otherInfo      String
+  street         String
+  preference     Preference @default(calls)
+  NIN            String     @unique
+  driversLicense String     @unique
+  BVN            String     @unique
+  userId         String
+  user           User       @relation(fields: [userId], references: [id])
 }
 
 model Message {
-  id          String   @id @default(uuid())
-  senderId    String
-  receiverId  String
-  content     String
-  propertyId  String?
-  createdAt   DateTime @default(now())
-  sender    User    @relation("SentMessages", fields: [senderId], references: [id])
-  receiver  User    @relation("ReceivedMessages", fields: [receiverId], references: [id])
-  property  Property? @relation("PropertyMessages",fields: [propertyId], references: [id])
+  id         String    @id @default(uuid())
+  senderId   String
+  receiverId String
+  content    String
+  propertyId String?
+  createdAt  DateTime  @default(now())
+  sender     User      @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User      @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  property   Property? @relation("PropertyMessages", fields: [propertyId], references: [id])
 }
 
 enum Preference {
   calls
   chat
   both
+}
+
+enum StarRating {
+  ONE   @map("1")
+  TWO   @map("2")
+  THREE @map("3")
+  FOUR  @map("4")
+  FIVE  @map("5")
+}
+
+model Review {
+  id         String     @id @default(uuid())
+  reviewerId String
+  propertyId String
+  rating     StarRating
+  comment    String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  reviewer User     @relation("Reviewer", fields: [reviewerId], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
 }

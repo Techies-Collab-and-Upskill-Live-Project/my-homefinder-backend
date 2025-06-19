@@ -1,10 +1,9 @@
 // service for updating profiles
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../prisma/prisma';
+
+
+
 class updateProfiles {
-    public prisma : PrismaClient
-    constructor () {
-        this.prisma = new PrismaClient()
-    }
 
     public async updateTenantProfile(image:any,body:any,userId:string){
         const {fullName,phoneNumber,street,city,state,NIN} = body
@@ -17,7 +16,7 @@ class updateProfiles {
             ...(state && {state: state}),
             ...(NIN && {NIN: NIN}),
         }
-        const updatePrisma = await this.prisma.tenantProfile.updateMany({
+        const updatePrisma = await prisma.tenantProfile.updateMany({
             where:{
                 userId : userId
             },
