@@ -1,6 +1,5 @@
-import { PrismaClient } from "../generated/prisma";
+import { prisma } from "../prisma/prisma";
 
-const prisma = new PrismaClient();
 
 export class MessageService {
   public async sendMessage(senderId: string, data: { receiverId: string; content: string; propertyId?: string }) {

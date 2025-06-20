@@ -5,6 +5,7 @@ import {PropertyController} from '../controllers/property.controller';
 import {PropertyValidationMiddleware} from '../middlewares/property-validation.middleware';
 import {authMiddleware} from "../middlewares/auth.middleware";
 import asyncHandler from "express-async-handler";
+import search from '../controllers/search.controller';
 
 
 export class PropertyRoute implements Routes {
@@ -103,7 +104,3 @@ export class PropertyRoute implements Routes {
         )
     }
 }
-
-
-
-
