@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { PrismaClient } from "../../generated/prisma";
+import { prisma } from "../prisma/prisma";
 import { RequestWithUser } from "../interfaces/auth.interface";
-const prisma = new PrismaClient()
+
 interface Error {
     message:string
 }

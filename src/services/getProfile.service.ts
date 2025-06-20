@@ -1,10 +1,7 @@
-import { PrismaClient } from "../../generated/prisma"
-const prisma = new PrismaClient()
+import { prisma } from "../prisma/prisma"
+
 class getProfile {
-    prisma : PrismaClient
-    constructor() {
-        this.prisma = prisma
-    }
+    
    public async getTenantProfile(userID:string){
         // check if user exists
         const checkUser = await prisma.user.findUnique({

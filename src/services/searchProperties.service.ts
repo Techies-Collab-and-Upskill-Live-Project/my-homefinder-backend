@@ -1,12 +1,10 @@
-import { PrismaClient } from "../../generated/prisma"
+import { prisma } from "../prisma/prisma"
+
 class Search {
-    prisma : PrismaClient
-    constructor(){
-        this.prisma = new PrismaClient()
-    }
+    
     public searchProperties = async (query:string) => {
         if(!query){throw new Error("query not available")}
-        const queryResult = await this.prisma.property.findMany({
+        const queryResult = await prisma.property.findMany({
             where: {
                 OR : [
                     {city: {contains:query, mode:'insensitive'}},
