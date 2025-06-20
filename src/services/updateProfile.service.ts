@@ -40,7 +40,7 @@ class updateProfiles {
             ...(driversLicense && {driversLicense: driversLicense}),
             ...(BVN && {BVN: BVN}),
         }
-        const updatePrisma = await this.prisma.landLordProfile.updateMany({
+        const updatePrisma = await prisma.landLordProfile.updateMany({
             where:{
                 userId : userId
             },
