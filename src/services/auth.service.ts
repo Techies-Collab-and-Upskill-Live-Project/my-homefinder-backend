@@ -41,13 +41,11 @@ export class AuthService {
     }
 
     let userRole = await prisma.role.findUnique({
-      where: { name: role.toLowerCase() },
+      where: { name: role.toUpperCase() },
     });
 
     if (!userRole) {
-      userRole = await prisma.role.create({
-        data: { name: role.toLowerCase() },
-      });
+      throw new HTTPException(StatusCodes.BAD_REQUEST, "Role not found");
     }
 
     const hashedPassword = await hashPassword(password);
@@ -61,7 +59,18 @@ export class AuthService {
         role: {
           connect: { id: userRole.id },
         },
+        ...(role.toUpperCase() == "LANDLORD" && {
+          landlordProfile: {}
+        }),
+        ...(role.toUpperCase() == "RENTER" && {
+            tenantProfile: {}
+        })
       },
+      include: {
+        role: true,
+        tenantProfile: role === "RENTER",
+        landlordProfile: role === "LANDLORD",
+      }
     });
 
     return newUser;

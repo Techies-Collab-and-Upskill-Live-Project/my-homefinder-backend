@@ -8,7 +8,7 @@ class getProfile {
             where: {id: userID}
         })
         if(checkUser == null){
-            throw new Error("user does not exsist")
+            throw new Error("user does not exist")
         }
         // get tenant profile
         const tenantProfile = await prisma.tenantProfile.findFirst({
