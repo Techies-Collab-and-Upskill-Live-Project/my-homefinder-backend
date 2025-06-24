@@ -6,7 +6,7 @@ import { MessageRoute } from "./routes/message.route";
 import { UserRoute } from "./routes/user.routes";
 import { ReviewRoute } from "./routes/review.route";
 import { VerificationRoute } from "./routes/verification.route";
-
+import { adminRoute } from "./routes/admin.route";
 const application = new App([
   new UploadRoute(),
   new AuthRoute(),
@@ -15,6 +15,7 @@ const application = new App([
   new UserRoute(),
   new ReviewRoute(),
   new VerificationRoute(),
+  new adminRoute()
 ]);
 
 application.startServer();
