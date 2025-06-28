@@ -7,8 +7,9 @@ info:
 servers:
   - url: http://localhost:5000/api/v1
     description: Local development server
-  - url: https://api.homefinder.com/v1
-    description: Production server
+  - url: https://my-homefinder-backend.onrender.com/api/v1
+    description: Staging server
+
 
 paths:
   /auth/signup:
