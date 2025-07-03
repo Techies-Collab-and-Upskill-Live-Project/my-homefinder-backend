@@ -698,6 +698,98 @@ paths:
                           type: number
                           example: 10
 
+  /users/updateprofile:
+    patch:
+      summary: Update User Profile
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullName:
+                  type: string
+                  example: "Updated User Name"
+                email:
+                  type: string
+                  format: email
+                  example: "user@gmail.com"
+      responses:
+        200:
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedProfileResponse'
+
+  /users/uploadprofilepic:
+    post:
+      summary: Upload User Profile Picture
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - User
+      parameters:
+        - in: query
+          name: folder
+          schema:
+            type: string
+          required: true
+          description: Folder Location on Cloud Storage
+        - in: query
+          name: format
+          schema:
+            type: string
+          required: true
+          description: Image Format (e.g., jpg, png)
+      responses:
+        200:
+          description: Profile picture uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadProfileImageResponse'
+
+  /users/update:
+    patch:
+      summary: Update User
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullName:
+                  type: string
+                  example: "Updated User Name"
+                email:
+                  type: string
+                  format: email
+                  example: "user@gmail.com"
+      responses:
+        200:
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User updated successfully"
+                  user:
+                    $ref: '#/components/schemas/User'
+
 components:
   schemas:
     Property:
@@ -938,6 +1030,84 @@ components:
           type: boolean
           example: true
 
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: The unique identifier for the user profile
+        profileImage:
+          type: string
+          example: ""
+          description: URL or path to the user's profile image
+        fullName:
+          type: string
+          example: "Homefinder Admin"
+          description: The user's full name
+        firstName:
+          type: string
+          example: "admin"
+          description: The user's first name
+        lastName:
+          type: string
+          example: "HomeFinder"
+          description: The user's last name
+        otherName:
+          type: string
+          example: "Finder"
+          description: Any other names or middle names of the user
+        otherInfo:
+          type: string
+          example: ""
+          description: Additional information about the user
+        address:
+          type: string
+          example: "No.1 Somewhere Street Nobody Town"
+          description: The user's physical address
+        preference:
+          type: string
+          example: "CALLS"
+          description: The user's communication preference
+          enum: [ CALLS, EMAILS, SMS, NONE ]
+        NIN:
+          type: string
+          example: ""
+          description: National Identification Number
+        driversLicense:
+          type: string
+          example: ""
+          description: Driver's license number
+        BVN:
+          type: string
+          example: ""
+          description: Bank Verification Number
+        userId:
+          type: string
+          format: uuid
+          example: "65d6cbf9-9bc2-4f1b-b32b-588817a199af"
+          description: The unique identifier linking to the user account
+      required:
+        - id
+        - fullName
+        - firstName
+        - lastName
+        - preference
+        - userId
+
+    UpdatedProfileResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Landlord profile updated successfully"
+          description: Success message indicating the profile was updated
+        data:
+          $ref: '#/components/schemas/UserProfile'
+      required:
+        - message
+        - data
+
     BudgetFilter:
       type: object
       properties:
@@ -989,6 +1159,21 @@ components:
                 $ref: '#/components/schemas/Property'
             pagination:
               $ref: '#/components/schemas/Pagination'
+
+    UploadProfileImageResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+          description: Indicates whether the image upload was successful
+        message:
+          type: string
+          example: "User Profile image saved successfully"
+          description: Status message about the upload operation
+      required:
+        - success
+        - message
 
   securitySchemes:
     BearerAuth:
