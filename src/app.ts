@@ -1,80 +1,92 @@
-import express, { Application } from "express";
+import express, {Application} from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import { CREDENTIALS, PORT } from "./config";
+import {CREDENTIALS, PORT, ORIGIN} from "./config";
 import errorMiddleware from "./middlewares/error.middleware";
-import { notFoundError } from "./middlewares/notfound.middleware";
-import { Routes } from "./interfaces/route.interface";
-import { PrismaClient } from "./generated/prisma";
-import swaggerUi from  "swagger-ui-express";
+import {notFoundError} from "./middlewares/notfound.middleware";
+import {Routes} from "./interfaces/route.interface";
+import {PrismaClient} from "./generated/prisma";
+import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
+import {StatusCodes} from "http-status-codes";
+import HTTPException from "./exceptions/http.exception";
 
 class App {
-  public port: number;
-  public app: Application;
-  public prisma: PrismaClient;
+    public port: number;
+    public app: Application;
+    public prisma: PrismaClient;
+    public whitelist: string[];
 
-  private readonly BASE_PATH = "/api/v1"; 
+    private readonly BASE_PATH = "/api/v1";
 
-  constructor(routes: Routes[]) {
-    this.port = (PORT || 8500) as number;
-    this.app = express();
-    this.prisma = new PrismaClient();
+    constructor(routes: Routes[]) {
+        this.port = (PORT || 8500) as number;
+        this.app = express();
+        this.prisma = new PrismaClient();
+        this.whitelist = ORIGIN ? ORIGIN.split(',').map(origin => origin.trim()) : [];
 
-    this.connectDatabase();
-    this.initializeMiddlewares();
-    this.initializeRoutes(routes);
-    this.initializeErrorHandling();
-  }
-
-  private initializeMiddlewares = () => {
-    this.app.use(morgan("combined"));
-    this.app.use(express.json());
-    this.app.use(helmet());
-    this.app.use(cors({ origin: CREDENTIALS, credentials: true }));
-    this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(cookieParser());
-    this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(YAML.load("./src/docs/swagger.yaml")));
-  };
-
-  private initializeRoutes = (routes: Routes[]) => {
-    this.app.get("/", async (req, res) => {
-      res.send("Welcome to My Homefinder");
-    });
-    
-    routes.forEach(({ path, router }) => {
-      this.app.use(`${this.BASE_PATH}${path}`, router);
-    });
-  };
-
-  private connectDatabase = async () => {
-    try {
-      await this.prisma.$connect();
-      console.log("Connected to database");
-    } catch (error) {
-      console.error("Failed to connect to database");
+        this.connectDatabase();
+        this.initializeMiddlewares();
+        this.initializeRoutes(routes);
+        this.initializeErrorHandling();
     }
-  };
 
-  private initializeErrorHandling = () => {
-    this.app.use(errorMiddleware);
-    this.app.use(notFoundError);
-  };
+    private initializeMiddlewares = () => {
+        this.app.use(morgan("combined"));
+        this.app.use(express.json());
+        this.app.use(helmet());
+        this.app.use(cors({
+            origin: (origin, cb) => {
+                if (!origin || this.whitelist.includes(origin)) {
+                    cb(null, true);
+                } else {
+                    cb(new HTTPException(StatusCodes.FORBIDDEN, "CORS Error: Origin not allowed"));
+                }
+            }, credentials: true
+        }));
+        this.app.use(express.urlencoded({extended: true}));
+        this.app.use(cookieParser());
+        this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(YAML.load("./src/docs/swagger.yaml")));
+    };
 
-  public startServer = async () => {
-    this.app.listen(this.port, (error) => {
-      if (error) {
-        console.log(`Failed to start server on port ${this.port}`);
-      }
-      console.log(`Server listening on port ${this.port}`);
-    });
-  };
+    private initializeRoutes = (routes: Routes[]) => {
+        this.app.get("/", async (req, res) => {
+            res.send("Welcome to My Homefinder");
+        });
 
-  public getServer(){
-    return this.app;
-  }
+        routes.forEach(({path, router}) => {
+            this.app.use(`${this.BASE_PATH}${path}`, router);
+        });
+    };
+
+    private connectDatabase = async () => {
+        try {
+            await this.prisma.$connect();
+            console.log("Connected to database");
+        } catch (error) {
+            console.error("Failed to connect to database");
+        }
+    };
+
+    private initializeErrorHandling = () => {
+        this.app.use(errorMiddleware);
+        this.app.use(notFoundError);
+    };
+
+    public startServer = async () => {
+        this.app.listen(this.port, (error) => {
+            if (error) {
+                console.log(`Failed to start server on port ${this.port}`);
+            }
+            console.log(`Server listening on port ${this.port}`);
+        });
+    };
+
+    public getServer() {
+        return this.app;
+    }
 }
 
 export default App;
