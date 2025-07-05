@@ -127,7 +127,7 @@ model TenantProfile {
   street       String
   city         String
   state        String
-  NIN          String @unique
+  NIN          String
   userId       String @unique
   user         User   @relation(fields: [userId], references: [id])
 }
@@ -148,9 +148,9 @@ model LandLordProfile {
   otherInfo      String
   address        String
   preference     Preference @default(CALLS)
-  NIN            String     @unique
-  driversLicense String     @unique
-  BVN            String     @unique
+  NIN            String
+  driversLicense String
+  BVN            String
   userId         String     @unique
   user           User       @relation(fields: [userId], references: [id])
 }
