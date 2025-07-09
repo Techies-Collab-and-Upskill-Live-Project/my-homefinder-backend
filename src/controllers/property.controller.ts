@@ -308,4 +308,17 @@ export class PropertyController {
             next(error);
         }
     };
+
+    public getAllProperties = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        try {
+            const properties = await this.propertyService.getAllProperties();
+            res.status(StatusCodes.OK).json({ data: properties });
+        } catch (error) {
+            next(error);
+        }
+    };
 }

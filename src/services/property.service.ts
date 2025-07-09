@@ -83,6 +83,17 @@ private prisma: typeof prisma;
     });
   };
 
+  public getAllProperties = async () => {
+    try {
+      const properties = await this.prisma.property.findMany({
+        where: { deleted: false },
+      });
+      return properties;
+    } catch (error) {
+      throw new HTTPException(StatusCodes.INTERNAL_SERVER_ERROR, 'Failed to fetch properties');
+    }
+  };
+
   // get Properties in a specific location with a given radius
   public getPropertiesInLocation = async (location: string, radius: number, page: number , limit: number) => {
     if (!location || typeof location !== "string") {

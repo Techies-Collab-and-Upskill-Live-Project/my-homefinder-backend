@@ -61,7 +61,6 @@ export class PropertyRoute implements Routes {
         // GET /api/properties?type=HOUSE&minPrice=1000&maxPrice=5000&city=Nairobi&page=1&limit=10&sortBy=price&sortOrder=asc
         this.router.get(
             `/`,
-            authMiddleware,
             PropertyValidationMiddleware.validatePropertyFilters,
             asyncHandler(this.propertyController.getProperties as RequestHandler)
         )
@@ -100,5 +99,6 @@ export class PropertyRoute implements Routes {
             authMiddleware,
             asyncHandler(this.propertyController.getPriceStatistics as RequestHandler)
         )
+
     }
 }
