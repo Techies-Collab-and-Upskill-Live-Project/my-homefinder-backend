@@ -118,7 +118,7 @@ export class AuthService {
 
         const user = await prisma.user.findFirst({
             where: {
-                OR: [{email: emailOrPhone}, {phone: emailOrPhone}],
+                email: emailOrPhone,
             },
             include: {role: true},
         });
