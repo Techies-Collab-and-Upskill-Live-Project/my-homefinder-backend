@@ -698,6 +698,50 @@ paths:
                           type: number
                           example: 10
 
+  /property/upload/{id}:
+    post:
+      summary: Upload User Profile Picture
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - Property
+      parameters:
+        - in: query
+          name: folder
+          schema:
+            type: string
+          required: true
+          description: Folder Location on Cloud Storage
+        - in: query
+          name: format
+          schema:
+            type: string
+          required: true
+          description: Image Format (e.g., jpg, png)
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the property to upload image for
+      responses:
+        200:
+          description: Property Images uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Property images uploaded successfully"
+                  images:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+                        example: 2
+
   /users/updateprofile:
     patch:
       summary: Update User Profile
