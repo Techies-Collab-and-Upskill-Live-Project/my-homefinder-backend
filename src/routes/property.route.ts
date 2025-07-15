@@ -4,6 +4,7 @@ import {PropertyController} from '../controllers/property.controller';
 import {PropertyValidationMiddleware} from '../middlewares/property-validation.middleware';
 import {authMiddleware} from "../middlewares/auth.middleware";
 import asyncHandler from "express-async-handler";
+import {uploadMultipleMiddleware} from "../middlewares/upload.middleware";
 
 
 export class PropertyRoute implements Routes {
@@ -36,6 +37,13 @@ export class PropertyRoute implements Routes {
             authMiddleware,
             asyncHandler(this.propertyController.updateProperty as RequestHandler)
         );
+
+        this.router.post(
+            `/upload/:id`,
+            authMiddleware,
+            uploadMultipleMiddleware,
+            asyncHandler(this.propertyController.uploadPropertyImage as RequestHandler)
+        )
 
         // delete a property by ID
         this.router.delete(

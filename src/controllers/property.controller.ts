@@ -4,6 +4,7 @@ import {PropertyService} from "../services/property.service";
 import {StatusCodes} from "http-status-codes";
 import {PropertyType} from '../generated/prisma';
 import {createPropertyData, PropertyFilters, PropertyQueryOptions} from '../interfaces/property.interface';
+import {MulterFile} from "../interfaces/multerFile.interface";
 
 export class PropertyController {
     private propertyService: PropertyService;
@@ -74,6 +75,25 @@ export class PropertyController {
             next(error);
         }
     };
+
+    public uploadPropertyImage = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            if (!req.files) {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    message: "No file uploaded"
+                });
+            }
+            const images = req.files as MulterFile[];
+            const propertyId = req.params.id;
+            const imagesUploaded = await this.propertyService.uploadPropertyImages(images, propertyId);
+            res.status(StatusCodes.CREATED).json({
+                message: "Images uploaded successfully",
+                images: imagesUploaded
+            });
+        } catch (error) {
+            next(error)
+        }
+    }
 
     public getPropertiesAtLocation = async (
         req: RequestWithUser,
@@ -316,7 +336,7 @@ export class PropertyController {
     ): Promise<void> => {
         try {
             const properties = await this.propertyService.getAllProperties();
-            res.status(StatusCodes.OK).json({ data: properties });
+            res.status(StatusCodes.OK).json({data: properties});
         } catch (error) {
             next(error);
         }
