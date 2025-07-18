@@ -104,7 +104,8 @@ export class AuthService {
             })
         }
 
-        return newUser;
+        const { password: _p, ...noPasswordUser } = newUser;
+        return noPasswordUser;
     };
 
     public login = async (
@@ -139,7 +140,8 @@ export class AuthService {
         });
 
         const cookie = this.createCookie(token);
-        return {user, cookie, token};
+        const { password: _p, ...noPasswordUser } = user;
+        return {user: noPasswordUser, cookie, token};
     };
 
     public logout = async (userId: string) => {
