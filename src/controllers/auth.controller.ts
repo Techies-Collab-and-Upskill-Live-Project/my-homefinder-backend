@@ -114,4 +114,14 @@ export class AuthController {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(response.message);
     }
   };
+  
+  public verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, otp } = req.body;
+      const result = await this.authService.verifyEmail(email, otp);
+      res.status(StatusCodes.OK).json({ success: true, ...result });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
