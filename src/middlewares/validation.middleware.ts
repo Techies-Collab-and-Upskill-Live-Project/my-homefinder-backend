@@ -1,7 +1,3 @@
-import { Request, Response, NextFunction } from "express";
-import { body, validationResult, ValidationChain } from "express-validator";
-import { ApiResponse } from "../interfaces/auth.interface";
-
 // Validation error handler middleware
 const handleValidationErrors = (
   req: Request,
@@ -20,6 +16,28 @@ const handleValidationErrors = (
   }
   next();
 };
+
+// Verify Email validation rules
+export const verifyEmailValidationRules = (): ValidationChain[] => [
+  body("email")
+    .isEmail()
+    .normalizeEmail()
+    .withMessage("Please provide a valid email address"),
+  body("otp")
+    .isLength({ min: 6, max: 6 })
+    .isNumeric()
+    .withMessage("Please provide a valid 6-digit verification code"),
+];
+
+export const validateVerifyEmail = [
+  ...verifyEmailValidationRules(),
+  handleValidationErrors,
+];
+import { Request, Response, NextFunction } from "express";
+import { body, validationResult, ValidationChain } from "express-validator";
+import { ApiResponse } from "../interfaces/auth.interface";
+
+
 
 // Forgot Password validation rules
 export const forgotPasswordValidationRules = (): ValidationChain[] => [
