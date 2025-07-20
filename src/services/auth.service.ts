@@ -9,6 +9,9 @@ import {
     TokenDataType,
 } from "../interfaces/auth.interface";
 import {generateToken} from "../utils/jwt.util";
+import { OTPGenerator } from "../utils/otp-generator.util";
+import { config } from "../config";
+import { EmailService } from "../services/email.service";
 
 export class AuthService {
 
@@ -50,12 +53,15 @@ export class AuthService {
 
         const hashedPassword = await hashPassword(password);
 
+
+        // Create user without OTP fields
         const newUser = await prisma.user.create({
             data: {
                 fullName,
                 email,
                 phone,
                 password: hashedPassword,
+                isVerified: false,
                 role: {
                     connect: {id: userRole.id},
                 },
@@ -66,6 +72,39 @@ export class AuthService {
                 landlordProfile: role.toUpperCase() === "LANDLORD",
             }
         });
+
+        // Invalidate any existing unused tokens for this user
+        await prisma.emailVerificationToken.updateMany({
+            where: {
+                userId: newUser.id,
+                used: false,
+                expiresAt: {
+                    gt: new Date(),
+                },
+            },
+            data: {
+                used: true,
+            },
+        });
+
+        // Generate OTP and expiry
+        const otp = OTPGenerator.generateNumeric(6);
+        const expiresAt = OTPGenerator.generateExpiryDate(config.otp.expiryMinutes);
+        const hashedOTP = await hashPassword(otp);
+
+        // Store the token in database
+        await prisma.emailVerificationToken.create({
+            data: {
+                token: hashedOTP,
+                userId: newUser.id,
+                expiresAt,
+                used: false,
+            },
+        });
+
+        // Send verification email
+        const emailService = new EmailService();
+        await emailService.sendVerificationEmail(email, otp);
 
         // create profile for user
         if (role.toUpperCase() === "TENANT") {
@@ -108,6 +147,51 @@ export class AuthService {
         return noPasswordUser;
     };
 
+        // Resend verification email with new OTP
+    public resendVerificationEmail = async (email: string) => {
+        if (!email) {
+            throw new HTTPException(StatusCodes.BAD_REQUEST, "Email is required");
+        }
+        const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+        if (!user) {
+            throw new HTTPException(StatusCodes.NOT_FOUND, "User not found");
+        }
+        if (user.isVerified) {
+            throw new HTTPException(StatusCodes.BAD_REQUEST, "User already verified");
+        }
+
+        // Invalidate any existing unused tokens for this user
+        await prisma.emailVerificationToken.updateMany({
+            where: {
+                userId: user.id,
+                used: false,
+                expiresAt: { gt: new Date() },
+            },
+            data: { used: true },
+        });
+
+        // Generate new OTP and expiry
+        const otp = OTPGenerator.generateNumeric(6);
+        const expiresAt = OTPGenerator.generateExpiryDate(config.otp.expiryMinutes);
+        const hashedOTP = await hashPassword(otp);
+
+        // Store the new token in database
+        await prisma.emailVerificationToken.create({
+            data: {
+                token: hashedOTP,
+                userId: user.id,
+                expiresAt,
+                used: false,
+            },
+        });
+
+        // Send verification email
+        const emailService = new EmailService();
+        await emailService.sendVerificationEmail(email, otp);
+
+        return { message: "Verification email resent" };
+    };
+
     public login = async (
         loginData: loginDataType
     ): Promise<{ user: any; token: TokenDataType; cookie: string }> => {
@@ -128,6 +212,10 @@ export class AuthService {
             throw new HTTPException(StatusCodes.NOT_FOUND, "User not found");
         }
 
+        if (!user.isVerified) {
+            throw new HTTPException(StatusCodes.UNAUTHORIZED, "Please verify your email before logging in.");
+        }
+
         const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
             throw new HTTPException(StatusCodes.UNAUTHORIZED, "Invalid credentials");
@@ -142,6 +230,57 @@ export class AuthService {
         const cookie = this.createCookie(token);
         const { password: _p, ...noPasswordUser } = user;
         return {user: noPasswordUser, cookie, token};
+    };
+
+    // Verify OTP and mark user as verified (using EmailVerificationToken)
+    public verifyEmail = async (email: string, otp: string) => {
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            throw new HTTPException(StatusCodes.NOT_FOUND, "User not found");
+        }
+        if (user.isVerified) {
+            throw new HTTPException(StatusCodes.BAD_REQUEST, "User already verified");
+        }
+        // Find all valid tokens that haven't expired or been used
+        const validTokens = await prisma.emailVerificationToken.findMany({
+            where: {
+                userId: user.id,
+                used: false,
+                expiresAt: {
+                    gt: new Date(),
+                },
+            },
+        });
+
+        // Find the matching token by comparing hashes
+        let matchingTokenRecord = null;
+        for (const tokenRecord of validTokens) {
+            const isMatch = await comparePassword(otp, tokenRecord.token);
+            if (isMatch) {
+                matchingTokenRecord = tokenRecord;
+                break;
+            }
+        }
+
+        if (!matchingTokenRecord) {
+            throw new HTTPException(StatusCodes.UNAUTHORIZED, "Invalid or expired verification code");
+        }
+
+        // Mark user as verified and token as used
+        await prisma.$transaction([
+            prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    isVerified: true,
+                },
+            }),
+            prisma.emailVerificationToken.update({
+                where: { id: matchingTokenRecord.id },
+                data: { used: true },
+            }),
+        ]);
+
+        return { message: "Email verified successfully" };
     };
 
     public logout = async (userId: string) => {

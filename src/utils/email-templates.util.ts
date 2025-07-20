@@ -82,4 +82,69 @@ export class EmailTemplates {
 
     return { subject, html, text };
   }
+
+  static verificationTemplate(otp: string, userEmail: string): { subject: string; html: string; text: string } {
+    const subject = `Verify Your Email - ${config.app.name}`;
+
+    const html = String.raw`<!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Email Verification</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background-color: #f8f9fa; padding: 20px; text-align: center; }
+          .content { padding: 20px; }
+          .otp-code {
+            background-color: #e9ecef;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin: 20px 0;
+            border-radius: 5px;
+          }
+          .footer { background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; }
+          .warning { color: #dc3545; font-weight: bold; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>${config.app.name}</h1>
+            <h2>Email Verification</h2>
+          </div>
+          <div class="content">
+            <p>Hello,</p>
+            <p>Thank you for signing up! To complete your registration, please verify your email address (<strong>${userEmail}</strong>).</p>
+            <p>Your verification code is:</p>
+            <div class="otp-code">${otp}</div>
+            <p>This code will expire in <strong>${config.otp.expiryMinutes} minutes</strong>.</p>
+            <p class="warning">For security reasons, never share this code with anyone.</p>
+          </div>
+          <div class="footer">
+            <p>This is an automated message from ${config.app.name}. Please do not reply to this email.</p>
+          </div>
+        </div>
+      </body>
+      </html>`;
+
+    const text = `Verify Your Email - ${config.app.name}
+
+Hello,
+
+Thank you for signing up! To complete your registration, please verify your email address (${userEmail}).
+
+Your verification code is: ${otp}
+
+This code will expire in ${config.otp.expiryMinutes} minutes.
+
+For security reasons, never share this code with anyone.
+
+This is an automated message from ${config.app.name}. Please do not reply to this email.`;
+
+    return { subject, html, text };
+  }
 }

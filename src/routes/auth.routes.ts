@@ -4,10 +4,12 @@ import { AuthController } from "../controllers/auth.controller";
 import {
   validateForgotPassword,
   validateResetPassword,
+  validateVerifyEmail,
 } from "../middlewares/validation.middleware";
 import {
   forgotPasswordLimiter,
   resetPasswordLimiter,
+  verifyEmailLimiter,
 } from "../middlewares/rate-limiter.middleware";
 
 export class AuthRoute implements Routes {
@@ -36,5 +38,18 @@ export class AuthRoute implements Routes {
 
     this.router.post("/signup", this.authController.signup);
     this.router.post("/login", this.authController.login);
+
+    this.router.post(
+      "/verify-email", 
+      verifyEmailLimiter, 
+      validateVerifyEmail, 
+      this.authController.verifyEmail);
+      
+    this.router.post(
+      "/resend-verification",
+      verifyEmailLimiter,
+      validateVerifyEmail,
+      this.authController.resendVerificationEmail
+    );
   }
 }
