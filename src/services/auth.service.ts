@@ -146,6 +146,51 @@ export class AuthService {
         return newUser;
     };
 
+        // Resend verification email with new OTP
+    public resendVerificationEmail = async (email: string) => {
+        if (!email) {
+            throw new HTTPException(StatusCodes.BAD_REQUEST, "Email is required");
+        }
+        const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+        if (!user) {
+            throw new HTTPException(StatusCodes.NOT_FOUND, "User not found");
+        }
+        if (user.isVerified) {
+            throw new HTTPException(StatusCodes.BAD_REQUEST, "User already verified");
+        }
+
+        // Invalidate any existing unused tokens for this user
+        await prisma.emailVerificationToken.updateMany({
+            where: {
+                userId: user.id,
+                used: false,
+                expiresAt: { gt: new Date() },
+            },
+            data: { used: true },
+        });
+
+        // Generate new OTP and expiry
+        const otp = OTPGenerator.generateNumeric(6);
+        const expiresAt = OTPGenerator.generateExpiryDate(config.otp.expiryMinutes);
+        const hashedOTP = await hashPassword(otp);
+
+        // Store the new token in database
+        await prisma.emailVerificationToken.create({
+            data: {
+                token: hashedOTP,
+                userId: user.id,
+                expiresAt,
+                used: false,
+            },
+        });
+
+        // Send verification email
+        const emailService = new EmailService();
+        await emailService.sendVerificationEmail(email, otp);
+
+        return { message: "Verification email resent" };
+    };
+
     public login = async (
         loginData: loginDataType
     ): Promise<{ user: any; token: TokenDataType; cookie: string }> => {

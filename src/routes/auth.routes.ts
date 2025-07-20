@@ -38,6 +38,18 @@ export class AuthRoute implements Routes {
 
     this.router.post("/signup", this.authController.signup);
     this.router.post("/login", this.authController.login);
-    this.router.post("/verify-email", verifyEmailLimiter, validateVerifyEmail, this.authController.verifyEmail);
+
+    this.router.post(
+      "/verify-email", 
+      verifyEmailLimiter, 
+      validateVerifyEmail, 
+      this.authController.verifyEmail);
+      
+    this.router.post(
+      "/resend-verification",
+      verifyEmailLimiter,
+      validateVerifyEmail,
+      this.authController.resendVerificationEmail
+    );
   }
 }

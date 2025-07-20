@@ -124,4 +124,15 @@ export class AuthController {
       next(error);
     }
   };
+
+  public resendVerificationEmail = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email } = req.body;
+    const result = await this.authService.resendVerificationEmail(email);
+    res.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
+
 }
