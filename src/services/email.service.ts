@@ -35,6 +35,21 @@ export class EmailService {
     }
   }
 
+  async sendVerificationEmail(email: string, otp: string): Promise<void> {
+    try {
+      const template = EmailTemplates.verificationTemplate(otp, email);
+      await this.transporter.sendMail({
+        from: config.email.from,
+        to: email,
+        subject: template.subject,
+        html: template.html,
+        text: template.text,
+      });
+    } catch (error) {
+      throw new HTTPException(StatusCodes.BAD_REQUEST,'Failed to send user verification email');
+    }
+  }
+
   async verifyConnection(): Promise<boolean> {
     try {
       await this.transporter.verify();
