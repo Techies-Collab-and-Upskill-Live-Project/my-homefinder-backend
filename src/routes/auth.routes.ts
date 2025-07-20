@@ -48,7 +48,6 @@ export class AuthRoute implements Routes {
     this.router.post(
       "/resend-verification",
       verifyEmailLimiter,
-      validateVerifyEmail,
       this.authController.resendVerificationEmail
     );
   }
