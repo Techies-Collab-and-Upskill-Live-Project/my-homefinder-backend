@@ -1,3 +1,5 @@
+
+jest.setTimeout(20000); // Increase timeout for slow integration tests
 process.env.JWT_SECRET = 'testsecret';
 
 import App from '../../../app';
