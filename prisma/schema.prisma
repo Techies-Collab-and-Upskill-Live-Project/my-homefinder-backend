@@ -34,16 +34,17 @@ model User {
   updatedAt    DateTime @updatedAt
 
   // Password reset tokens
-  passwordResetTokens PasswordResetToken[]
+  passwordResetTokens     PasswordResetToken[]
   emailVerificationTokens EmailVerificationToken[]
-  UserDocument        UserDocument[]
-  properties          Property[]
-  landlordProfile     LandLordProfile?
-  tenantProfile       TenantProfile?
+  UserDocument            UserDocument[]
+  properties              Property[]
+  landlordProfile         LandLordProfile?
+  tenantProfile           TenantProfile?
 
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
 }
+
 model EmailVerificationToken {
   id        String   @id @default(cuid())
   token     String   @unique
@@ -67,12 +68,14 @@ model PasswordResetToken {
 }
 
 model UserDocument {
-  id         String             @id @default(uuid())
-  userId     String
-  fileName   String
-  fileUrl    String
-  status     VerificationStatus @default(PENDING)
-  uploadedAt DateTime           @default(now())
+  id             String             @id @default(uuid())
+  userId         String
+  fileName       String
+  type           String
+  fileUrl        String
+  documentNumber String
+  status         VerificationStatus @default(PENDING)
+  uploadedAt     DateTime           @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
