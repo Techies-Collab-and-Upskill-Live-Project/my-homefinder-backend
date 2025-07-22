@@ -19,10 +19,16 @@ export class PropertyController {
         next: NextFunction,
     ): Promise<void> => {
         try {
+            const propertyFiles = req.files as MulterFile[];
+            if (!propertyFiles) {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    message: "no file uploaded"
+                });
+            }
             const landlordId = req.user.id;
             const createPropertyData: createPropertyData = req.body;
-            const property = await this.propertyService.createProperty(createPropertyData, landlordId);
-            res.status(StatusCodes.CREATED).json({message: "Property created", property});
+            const result = await this.propertyService.createProperty(createPropertyData, landlordId, propertyFiles);
+            res.status(StatusCodes.CREATED).json({message: "Property created", data: { property: result.property, images: result.images }});
         } catch (error) {
             next(error);
         }
@@ -80,7 +86,7 @@ export class PropertyController {
         try {
             if (!req.files) {
                 res.status(StatusCodes.BAD_REQUEST).json({
-                    message: "No file uploaded"
+                    message: "no file uploaded"
                 });
             }
             const images = req.files as MulterFile[];

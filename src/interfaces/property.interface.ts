@@ -20,7 +20,7 @@ export interface PropertyQueryOptions {
 export  interface createPropertyData {
     title: string;
     description: string;
-    price: number;
+    price: string;
     type: PropertyType;
     city: string;
     state: string;

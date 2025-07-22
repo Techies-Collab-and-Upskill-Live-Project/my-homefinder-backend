@@ -17,7 +17,7 @@ export async function geocodeAddress(
     });
     const result = gisResponse.data.results[0];
     return {
-      formatedAddress: result.formatted_address,
+      formatedAddress: result.formatted_address || address,
       lat: result.geometry.location.lat,
       lng: result.geometry.location.lng,
     };

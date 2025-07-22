@@ -15,11 +15,13 @@ export class PropertyService {
         this.prisma = prisma;
     }
 
-    public createProperty = async (data: createPropertyData, userId: string) => {
+    public createProperty = async (data: createPropertyData, userId: string, files: MulterFile[]) => {
         if (isEmpty(data)) {
             throw new HTTPException(StatusCodes.BAD_REQUEST, "Property data cannot be empty");
         }
-
+        if(!files) {
+            throw new HTTPException(StatusCodes.BAD_REQUEST, "Provide Property Images")
+        }
         const user = await this.prisma.user.findUnique({
             where: {id: userId},
         })
@@ -35,7 +37,7 @@ export class PropertyService {
             data: {
                 title: data.title,
                 description: data.description,
-                price: data.price,
+                price: parseFloat(data.price),
                 type: data.type,
                 city: data.city,
                 state: data.state,
@@ -46,7 +48,23 @@ export class PropertyService {
                 landlordId: userId,
             },
         });
-        return newProperty;
+        const imageDataArray: { propertyId: string; url: string }[] = [];
+        for (const image of files) {
+            const imageData = {
+                propertyId: newProperty.id,
+                url: image.path
+            };
+            imageDataArray.push(imageData);
+        }
+        const propertyImages = await Promise.all(
+            imageDataArray.map((image) =>
+                prisma.propertyImage.create({
+                    data: image,
+                })
+            )
+        );
+
+        return {property: newProperty, images: propertyImages};
     };
 
     public getPropertyById = async (id: string) => {
@@ -117,7 +135,6 @@ export class PropertyService {
             };
             imageDataArray.push(imageData);
         }
-        console.log(imageDataArray)
         const propertyImages = await prisma.propertyImage.createMany({
             data: imageDataArray,
         });

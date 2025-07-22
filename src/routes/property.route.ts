@@ -21,6 +21,7 @@ export class PropertyRoute implements Routes {
         this.router.post(
             `/`,
             authMiddleware,
+            uploadMultipleMiddleware,
             asyncHandler(this.propertyController.createProperty as RequestHandler)
         );
 
