@@ -3,12 +3,30 @@ import {RequestWithUser} from "../interfaces/auth.interface";
 import {NextFunction, Response} from "express";
 import {StatusCodes} from "http-status-codes";
 import {UpdateProfileInterface} from "../interfaces/profile.interface";
+import HTTPException from "../exceptions/http.exception";
 
 export class UserController {
     private userService;
 
     constructor() {
         this.userService = new UserService();
+    }
+
+    public getUserProfile = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+        try {
+            const userId = req.params.id;
+            if (!userId) {
+                return res.status(StatusCodes.BAD_REQUEST).json({
+                    message: "User ID not provided",
+                })
+            }
+            const userProfile = await this.userService.getUserProfile(userId)
+            res.status(StatusCodes.OK).json({
+                data: userProfile,
+            })
+        } catch (error) {
+            next(error)
+        }
     }
 
     public updateUserProfile = async (req: RequestWithUser, res: Response, next: NextFunction) => {
@@ -23,9 +41,9 @@ export class UserController {
             next(error)
         }
     }
-    public uploadProfilePic = async(req: RequestWithUser, res: Response, next: NextFunction) => {
-        try{
-            if(!req.file) {
+    public uploadProfilePic = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+        try {
+            if (!req.file) {
                 return res.status(StatusCodes.BAD_REQUEST).json({
                     message: "No file uploaded"
                 });

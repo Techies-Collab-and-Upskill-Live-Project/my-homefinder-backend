@@ -12,6 +12,34 @@ export class UserService {
         this.prisma = new PrismaClient();
     }
 
+    public  getUserProfile = async (userId: string) => {
+        const user = await this.prisma.user.findUnique({
+            where: {id: userId},
+            include: {
+                role: true,
+                tenantProfile: true,
+                landlordProfile: true,
+            }
+        })
+        if(!user){
+            throw new HTTPException(StatusCodes.NOT_FOUND, "User is not Found");
+        }
+        if (user.role.name === "TENANT") {
+            const tenantProfile = await this.prisma.tenantProfile.findUnique({
+                where: {userId: user.id},
+            })
+            return {message: "Tenant profile updated successfully", data: tenantProfile};
+        }
+
+        // get Landlord Profile user.role.name === "LANDLORD"
+        if (user.role.name === "LANDLORD") {
+            const landlordProfile = await this.prisma.landLordProfile.findUnique({
+                where: {userId: user.id},
+            })
+            return {data: landlordProfile};
+        }
+    }
+
     public updateUserProfile = async (userId: string, data: UpdateProfileInterface) => {
         if (isEmpty(data)) {
             throw new HTTPException(StatusCodes.BAD_REQUEST, "Empty User Profile Data");

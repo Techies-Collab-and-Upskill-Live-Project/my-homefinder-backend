@@ -137,7 +137,6 @@ export class AuthService {
                     preference: "CALLS",
                     NIN: "",
                     driversLicense: "",
-                    BVN: "",
                     userId: newUser.id
                 }
             })

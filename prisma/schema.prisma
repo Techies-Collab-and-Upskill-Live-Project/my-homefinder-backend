@@ -164,7 +164,6 @@ model LandLordProfile {
   preference     Preference @default(CALLS)
   NIN            String
   driversLicense String
-  BVN            String
   userId         String     @unique
   user           User       @relation(fields: [userId], references: [id])
 }

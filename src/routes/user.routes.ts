@@ -21,6 +21,7 @@ export class UserRoute implements Routes {
         this.router.get("/", authMiddleware, asyncHandler(this.userController.getAllUsers));
         this.router.patch("/:id", authMiddleware, asyncHandler(this.userController.updateUser));
         this.router.delete("/:id", authMiddleware, asyncHandler(this.userController.deleteUser));
+        this.router.get('/profile/:id', authMiddleware, asyncHandler(this.userController.getUserProfile));
     }
 }
 
