@@ -3,7 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import {CREDENTIALS, PORT, ORIGIN} from "./config";
+import {CREDENTIALS,  ORIGIN} from "./config";
 import errorMiddleware from "./middlewares/error.middleware";
 import {notFoundError} from "./middlewares/notfound.middleware";
 import {Routes} from "./interfaces/route.interface";
@@ -14,7 +14,7 @@ import {StatusCodes} from "http-status-codes";
 import HTTPException from "./exceptions/http.exception";
 
 class App {
-    public port: number;
+    // public port: number;
     public app: Application;
     public prisma: PrismaClient;
     public whitelist: string[];
@@ -22,7 +22,7 @@ class App {
     private readonly BASE_PATH = "/api/v1";
 
     constructor(routes: Routes[]) {
-        this.port = (PORT || 8500) as number;
+        // this.port = (PORT || 8500) as number;
         this.app = express();
         this.prisma = new PrismaClient();
         this.whitelist = ORIGIN ? ORIGIN.split(',').map(origin => origin.trim()) : [];
@@ -75,14 +75,14 @@ class App {
         this.app.use(notFoundError);
     };
 
-    public startServer = async () => {
-        this.app.listen(this.port, (error) => {
-            if (error) {
-                console.log(`Failed to start server on port ${this.port}`);
-            }
-            console.log(`Server listening on port ${this.port}`);
-        });
-    };
+    // public startServer = async () => {
+    //     this.app.listen(this.port, (error) => {
+    //         if (error) {
+    //             console.log(`Failed to start server on port ${this.port}`);
+    //         }
+    //         console.log(`Server listening on port ${this.port}`);
+    //     });
+    // };
 
     public getServer() {
         return this.app;
