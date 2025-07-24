@@ -15,7 +15,7 @@ export class MessageController {
       const senderId = req.user.id;
       const message = await this.messageService.sendMessage(senderId, req.body);
 
-      res.status(StatusCodes.CREATED).json({ message: "Message sent", data: message });
+      res.status(StatusCodes.CREATED).json({ message: "Message sent", data: message.data });
     } catch (error) {
       next(error);
     }
@@ -32,7 +32,7 @@ export class MessageController {
 
       const messages = await this.messageService.getMessagesInThread(userId, withUserId);
 
-      res.status(StatusCodes.OK).json({ data: messages });
+      res.status(StatusCodes.OK).json({ data: messages.data });
     } catch (error) {
       next(error);
     }

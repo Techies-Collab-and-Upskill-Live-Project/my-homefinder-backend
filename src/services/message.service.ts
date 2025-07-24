@@ -3,7 +3,7 @@ import { prisma } from "../prisma/prisma";
 
 export class MessageService {
   public async sendMessage(senderId: string, data: { receiverId: string; content: string; propertyId?: string }) {
-    return await prisma.message.create({
+    const message = await prisma.message.create({
       data: {
         senderId,
         receiverId: data.receiverId,
@@ -11,10 +11,11 @@ export class MessageService {
         propertyId: data.propertyId || null,
       },
     });
+    return {data: message}
   }
 
   public async getMessagesInThread(userId: string, withUserId: string) {
-    return await prisma.message.findMany({
+    const messageTheard = await prisma.message.findMany({
       where: {
         OR: [
           { senderId: userId, receiverId: withUserId },
@@ -25,5 +26,6 @@ export class MessageService {
         createdAt: "asc",
       },
     });
+    return { data: messageTheard }
   }
 }

@@ -10,6 +10,8 @@ import { ReviewRoute } from "./routes/review.route";
 import { VerificationRoute } from "./routes/verification.route";
 import { PORT } from "./config";
 import { timeStamp } from "console";
+import { registerMessagingHandlers } from "./socket/messaging.socket";
+import jwt from "jsonwebtoken";
 
 const application = new App([
   new UploadRoute(),
@@ -24,36 +26,24 @@ const application = new App([
 const app = application.getServer();
 const server = http.createServer(app);
 const io = new SocketIoServer(server, {
-  cors:{
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
+  cors: { origin: "*", methods: ["GET", "POST"] },
 });
 
-io.on("connection",  (socket) => {
-  console.log("New client connected:", socket.id);
-
-  socket.on("join_room", ({ roomId }) => {
-    socket.join(roomId);
-    console.log(`Client ${socket.id} joined room: ${roomId}`);
-  });
-
-  socket.on("send_message", (data) => {
-    const { roomId, content, senderId, reciverId } = data;
-    io.to(roomId).emit("receive_message", { 
-      content, 
-      senderId,
-      reciverId,
-    });
-    console.log("Message sent to room:", roomId, "Content:", content);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("Client disconnected:", socket.id);
-  });
+// JWT auth middleware
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token;
+  if (!token) return next(new Error("Authentication error"));
+  try {
+    socket.data.user = jwt.verify(token, process.env.JWT_SECRET!);
+    next();
+  } catch {
+    next(new Error("Invalid token"));
+  }
 });
 
-const port = PORT || 8500;
-server.listen(port, () => {
-  console.log(`Server + WebSocket listening on port ${port}`)
+// Register all socket event handlers
+registerMessagingHandlers(io);
+
+server.listen(process.env.PORT || 8500, () => {
+  console.log("Server + WebSocket running");
 });

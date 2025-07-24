@@ -24,11 +24,11 @@ export class UserService {
         if(!user){
             throw new HTTPException(StatusCodes.NOT_FOUND, "User is not Found");
         }
-        if (user.role.name === "TENANT") {
+        if (user.role.name === "RENTER") {
             const tenantProfile = await this.prisma.tenantProfile.findUnique({
                 where: {userId: user.id},
             })
-            return {message: "Tenant profile updated successfully", data: tenantProfile};
+            return {message: "Tenant profile retrieved successfully", data: tenantProfile};
         }
 
         // get Landlord Profile user.role.name === "LANDLORD"
@@ -56,8 +56,8 @@ export class UserService {
             throw new HTTPException(StatusCodes.NOT_FOUND, "User not found");
         }
 
-        // update Tenant Profile user.role.name === "TENANT"
-        if (user.role.name === "TENANT") {
+        // update Tenant Profile user.role.name === "RENTAL"
+        if (user.role.name === "RENTER") {
             const updatedProfile = await this.prisma.tenantProfile.update({
                 where: {userId: user.id},
                 data: {
@@ -92,7 +92,7 @@ export class UserService {
         })
         if (!role) throw new HTTPException(StatusCodes.NOT_FOUND, "User Role does not exist")
         // Correctly update profile image for tenant or landlord
-        if (role.name === "TENANT") {
+        if (role.name === "RENTER") {
             await this.prisma.tenantProfile.update({
                 where: { userId: user.id },
                 data: { profileImage: file.path }

@@ -68,7 +68,7 @@ export class AuthService {
             },
             include: {
                 role: true,
-                tenantProfile: role.toUpperCase() === "TENANT",
+                tenantProfile: role.toUpperCase() === "RENTAL",
                 landlordProfile: role.toUpperCase() === "LANDLORD",
             }
         });
@@ -107,7 +107,7 @@ export class AuthService {
         await emailService.sendVerificationEmail(email, otp);
 
         // create profile for user
-        if (role.toUpperCase() === "TENANT") {
+        if (role.toUpperCase() === "RENTER") {
             await prisma.tenantProfile.create({
                 data: {
                     profileImage: "",

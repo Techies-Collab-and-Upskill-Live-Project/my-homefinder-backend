@@ -143,7 +143,7 @@ model TenantProfile {
   state        String
   NIN          String
   userId       String @unique
-  user         User   @relation(fields: [userId], references: [id])
+  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Preference {
@@ -165,7 +165,7 @@ model LandLordProfile {
   NIN            String
   driversLicense String
   userId         String     @unique
-  user           User       @relation(fields: [userId], references: [id])
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Message {
@@ -175,9 +175,9 @@ model Message {
   content    String
   propertyId String?
   createdAt  DateTime  @default(now())
-  sender     User      @relation("SentMessages", fields: [senderId], references: [id])
-  receiver   User      @relation("ReceivedMessages", fields: [receiverId], references: [id])
-  property   Property? @relation("PropertyMessages", fields: [propertyId], references: [id])
+  sender     User      @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User      @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  property   Property? @relation("PropertyMessages", fields: [propertyId], references: [id], onDelete: Cascade)
 }
 
 enum StarRating {
@@ -197,6 +197,6 @@ model Review {
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 
-  reviewer User     @relation("Reviewer", fields: [reviewerId], references: [id])
-  property Property @relation(fields: [propertyId], references: [id])
+  reviewer User     @relation("Reviewer", fields: [reviewerId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 }
