@@ -134,11 +134,7 @@ model TenantProfile {
   id           Int    @id @default(autoincrement())
   profileImage String
   fullName     String
-  firstName    String
-  lastName     String
-  otherName    String
   phoneNumber  String @unique
-  street       String
   city         String
   state        String
   NIN          String
@@ -156,11 +152,11 @@ model LandLordProfile {
   id             Int        @id @default(autoincrement())
   profileImage   String
   fullName       String
-  firstName      String
-  lastName       String
-  otherName      String
   otherInfo      String
-  address        String
+  city           String
+  state          String
+  street         String
+  phoneNumber    String
   preference     Preference @default(CALLS)
   NIN            String
   driversLicense String
