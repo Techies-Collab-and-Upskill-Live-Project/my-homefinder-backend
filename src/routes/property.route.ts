@@ -39,6 +39,11 @@ export class PropertyRoute implements Routes {
             asyncHandler(this.propertyController.updateProperty as RequestHandler)
         );
 
+        this.router.get(
+            `/landlord/:landlordId`,
+            authMiddleware,
+            asyncHandler(this.propertyController.getLandlordProperties) as RequestHandler)
+
         this.router.post(
             `/upload/:id`,
             authMiddleware,

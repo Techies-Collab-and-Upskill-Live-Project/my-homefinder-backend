@@ -335,14 +335,17 @@ export class PropertyController {
         }
     };
 
-    public getAllProperties = async (
+    public getLandlordProperties = async (
         req: Request,
         res: Response,
         next: NextFunction
     ): Promise<void> => {
         try {
-            const properties = await this.propertyService.getAllProperties();
-            res.status(StatusCodes.OK).json({data: properties});
+            const landlordId = req.params.landlordId;
+            const page = parseInt(req.params.page) || 1;
+            const limit = parseInt(req.params.limit) || 10;
+            const result = await this.propertyService.getLandlordProperties(landlordId, page, limit );
+            res.status(StatusCodes.OK).json({data: result});
         } catch (error) {
             next(error);
         }

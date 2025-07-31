@@ -19,7 +19,7 @@ export class PropertyService {
         if (isEmpty(data)) {
             throw new HTTPException(StatusCodes.BAD_REQUEST, "Property data cannot be empty");
         }
-        if(!files) {
+        if (!files) {
             throw new HTTPException(StatusCodes.BAD_REQUEST, "Provide Property Images")
         }
         const user = await this.prisma.user.findUnique({
@@ -92,6 +92,33 @@ export class PropertyService {
         });
         return updated;
     };
+
+    public getLandlordProperties = async (landlordId: string, page: number, limit: number) => {
+        const skip = (page - 1) * limit;
+        const properties = await this.prisma.property.findMany({
+            where: {landlordId: landlordId},
+            include: {
+                images: true
+            },
+            skip,
+            take: limit
+        })
+        const totalCount = properties.length;
+        const totalPages = Math.ceil(totalCount / limit);
+        const hasNext = page < totalPages;
+        const hasPrev = page > 1;
+        return {
+            properties,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                totalCount,
+                limit,
+                hasNext,
+                hasPrev
+            },
+        };
+    }
 
     public softDeleteProperty = async (id: string, userId: string) => {
         const property = await this.prisma.property.findUnique({where: {id}});
