@@ -342,9 +342,20 @@ export class PropertyController {
     ): Promise<void> => {
         try {
             const landlordId = req.params.landlordId;
-            const page = parseInt(req.params.page) || 1;
-            const limit = parseInt(req.params.limit) || 10;
-            const result = await this.propertyService.getLandlordProperties(landlordId, page, limit );
+            let pageNo: number | undefined = 1
+            let lim: number | undefined = 10
+
+            const {page, limit} = req.query;
+
+            if(page){
+                pageNo = parseInt(page as string);
+            }
+            if (limit){
+                lim = parseInt(limit as string);
+            }
+
+            console.log("This the limit i want to get " + limit);
+            const result = await this.propertyService.getLandlordProperties(landlordId, pageNo, lim );
             res.status(StatusCodes.OK).json({data: result});
         } catch (error) {
             next(error);
