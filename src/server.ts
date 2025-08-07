@@ -12,6 +12,8 @@ import { PORT } from "./config";
 import { timeStamp } from "console";
 import { registerMessagingHandlers } from "./socket/messaging.socket";
 import jwt from "jsonwebtoken";
+import chalk from "chalk";
+import {websocketLogger} from "./socket/websocketLogger";
 
 const application = new App([
   new UploadRoute(),
@@ -29,6 +31,11 @@ const io = new SocketIoServer(server, {
   cors: { origin: "*", methods: ["GET", "POST"] },
 });
 
+
+io.engine.on("connection_error", (err) => {
+  console.error("❌ WebSocket connection error:", err.message);
+});
+
 // JWT auth middleware
 io.use((socket, next) => {
   const token = socket.handshake.auth?.token;
@@ -40,6 +47,8 @@ io.use((socket, next) => {
     next(new Error("Invalid token"));
   }
 });
+
+io.use(websocketLogger);
 
 // Register all socket event handlers
 registerMessagingHandlers(io);

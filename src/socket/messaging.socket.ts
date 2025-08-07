@@ -13,8 +13,8 @@ export function registerMessagingHandlers(io: Server) {
             const roomId = getRoomId(currentUser.id, withUserId);
             socket.join(roomId);
 
-            const history = await messageService.getMessagesInThread(currentUser.id, withUserId);
-            socket.emit("chat_history", history);
+            const messages = await messageService.getMessagesInThread(currentUser.id, withUserId);
+            socket.emit("chat_history", messages );
         });
 
         socket.on("send_message", async ({ receiverId, content, propertyId }) => {
